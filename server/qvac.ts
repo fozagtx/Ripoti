@@ -17,6 +17,7 @@ import { VISIT_SCHEMA, type DangerResult, type VisitForm } from './types.ts'
 import { pcmToWav } from './audio.ts'
 import { swahiliNumeralsToDigits } from './swnum.ts'
 import { sentenceOf, statedDays } from './duration.ts'
+import { groundForm } from './ground.ts'
 
 type Src = { readonly src: string }
 
@@ -162,7 +163,7 @@ export async function extract(transcript: string): Promise<VisitForm> {
     } as never)
     return (r as { final: Promise<{ contentText: string }> }).final
   })
-  return normaliseForm(JSON.parse(run.contentText))
+  return groundForm(normaliseForm(JSON.parse(run.contentText)), transcript)
 }
 
 export function normaliseForm(f: Partial<VisitForm>): VisitForm {

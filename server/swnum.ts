@@ -4,6 +4,7 @@
 const UNITS: Record<string, number> = {
   sifuri: 0, moja: 1, mmoja: 1, mbili: 2, wawili: 2, tatu: 3, watatu: 3, nne: 4, wanne: 4,
   tano: 5, watano: 5, sita: 6, saba: 7, nane: 8, wanane: 8, tisa: 9,
+  miwili: 2, mitatu: 3, minne: 4, mitano: 5, minane: 8,
 }
 const TENS: Record<string, number> = {
   kumi: 10, ishirini: 20, thelathini: 30, arobaini: 40, hamsini: 50, sitini: 60, sabini: 70, themanini: 80, tisini: 90,
