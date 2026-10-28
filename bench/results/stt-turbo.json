@@ -1,0 +1,225 @@
+{
+  "summary": {
+    "model": "whisper-large-v3-turbo",
+    "loadMs": 42762,
+    "utterances": 30,
+    "wer": 0.38699690402476783,
+    "cer": 0.11531883703884681,
+    "audioSeconds": 464.311875,
+    "inferenceSeconds": 503.216495496,
+    "realTimeFactor": 1.083789845986601,
+    "peakRssMb": 152
+  },
+  "rows": [
+    {
+      "file": "5952193592402663472.wav",
+      "ref": "nextgen ni mfumo ambao utawala wa shirikisho la anga unadai ungeruhusu ndege kutumia njia fupi na kuokoa mamilioni ya galoni za mafuta kila mwaka na kukata uzalishaji wa kaboni",
+      "hyp": "Next, jia ni mfumo ambao utawala wa shirikisho na anga unedai mgeruhusu ndege kutumia njia fupi na kukua mamilioni ya geloni ya mafuta kila mwaka kukata uzalishaji wa kaboni.",
+      "wer": 0.3103448275862069,
+      "ms": 57644
+    },
+    {
+      "file": "12530876620590353761.wav",
+      "ref": "utafiti wa karne ya ishirini umeonyesha kwamba kuna makundi mawili ya utofauti wa jeni: fiche na zilizoelezewa",
+      "hyp": "Utafiti wakarne ya ishirini imuunyesha kwamba kuna makundi mawili ya utafuti wajini. Kije na izliza lezo.",
+      "wer": 0.5294117647058824,
+      "ms": 17767
+    },
+    {
+      "file": "2128471129536729579.wav",
+      "ref": "baadhi ya safari za baharini huonyesha berlin na ujerumani katika brosha zao. kama unavyoona katika ramani iliyo hapo juu berlin haipo popote karibu na bahari na safari ya jiji hili haijumuishwi katika bei ya safari za baharini",
+      "hyp": "Bavi ya safari za baharini mwonyesha bali na ujerumani katika brosha zao. Kama unaviona katika ramani ilio hapojuu, bali haipo popote karibu na bahari na safari ya jijihili haijumuishwi katika bei ya safari za baharini.",
+      "wer": 0.2702702702702703,
+      "ms": 16793
+    },
+    {
+      "file": "3529557967308706850.wav",
+      "ref": "jinsi idadi ya rossby inavyokuwa ndogo ndivyo nyota zinapungua kuwa wa utendaji kwa kuzingatia mabadiliko ya sumaku",
+      "hyp": "Jinsi idadi ya Rose Bay inavyokuwa ndogo ndivyo nyote zinapupunguwa kuwa na tendaji kwa kuzingatima batuliko ya sumaku.",
+      "wer": 0.47058823529411764,
+      "ms": 15905
+    },
+    {
+      "file": "7233290098274301409.wav",
+      "ref": "wasafiri katika nchi zinazotoza ushuru wa juu wakati mwingine wanaweza kuokoa kiwango kikubwa cha pesa hasa kwa bidhaa kama vinywaji vyenye vileo na tumbaku",
+      "hyp": "Masafiri katika nichi zinazotoa ushuru wajuu wakati mungine wanaweza kuwakua kiwango kikubocha pesa. Hasaa kwa bibaa kama vinyoji, vinyo vileo na tumbaku.",
+      "wer": 0.5416666666666666,
+      "ms": 13851
+    },
+    {
+      "file": "8474445060031648375.wav",
+      "ref": "kadiri mvuto ulivyo chini ndivyo nguvu za maisha zilizoko zilivyo chanya. kila mtu ana uwezo wa kupata amani na kuridhika zaidi",
+      "hyp": "Kadri mvuto wa ulivyo chini ndiyo mguvu za maisha zilizoko zilivyo chanya. Kila mtu wana uwezo wa kupata amani kuridhika zaidi.",
+      "wer": 0.2857142857142857,
+      "ms": 13638
+    },
+    {
+      "file": "1305783249989953994.wav",
+      "ref": "mkuu wa polisi chandra shekar solanki alisema mshtakiwa alitokea mahakamani na uso uliofunikwa",
+      "hyp": "Mkuu wa polisi Chandra Sheka Solanki alisema mshutakiwa alitokea makamani na uso ulio funikwa.",
+      "wer": 0.38461538461538464,
+      "ms": 14073
+    },
+    {
+      "file": "16321567358955430000.wav",
+      "ref": "kilima cha giza au giza necropolis katika bonde la wafu la misri kina piramidi kadhaa ambazo piramidi kuu ni kubwa zaidi makaburi kadhaa madogo hekalu kadhaa na sphinx kuu",
+      "hyp": "Kilima chagiza au giza necropolis katika bonde la wafu la mistri kina piramidi katha ambazo piramidi kuu ni kubwa zaidi makaburi katha madogo hekalu katha na spins kuu",
+      "wer": 0.2413793103448276,
+      "ms": 12027
+    },
+    {
+      "file": "7026642609781843648.wav",
+      "ref": "yeyote ambaye atakuwa akiendesha gari maeneo yaliyoinuka au vijia vya milimani anastahili kuzingatia uwezekano wa theluji barafu na baridi kali",
+      "hyp": "Yeyote ambaye atakuwa kiendesha gari maeneo ya lio inuka au vijia vya milima anastahili kuzingatia uwezekano wa deluji barafu na baridi kali.",
+      "wer": 0.3,
+      "ms": 14946
+    },
+    {
+      "file": "12712499437256350020.wav",
+      "ref": "hakuna ilani ya tsunami iliyotolewa na kulingana na uwakala wa jeofizikia wa jakarta hakuna ilani ya tsunami itakayotolewa kwani mtetemeko haukufikia ukubwa unaohitajika wa 6.5",
+      "hyp": "Hakuna ilani ya tsunami ilio tolewa na kulingana na uwakala wa geofizikia wa jakataa. Hakuna ilani ya tsunami itakayo tolewa kwani mtete muko haukufikia ukubo unawitajika wa sita ndukta tano.",
+      "wer": 0.5,
+      "ms": 14450
+    },
+    {
+      "file": "14083462876020437788.wav",
+      "ref": "vile vile wanaume wanahitajika kuvaa suruali zinazofunika magoti",
+      "hyp": "Vile vile wanaume wanaitajika kuva surwali zinazofunika magoti.",
+      "wer": 0.375,
+      "ms": 14376
+    },
+    {
+      "file": "8400164703204964924.wav",
+      "ref": "kwanza waendeshaji wengi huvaa kiatu cha buti kilicho juu na laini chembamba kabisa soli",
+      "hyp": "Kwanza, waendeshaji wengi huvaki ya tu chabuti kilicho juu na laini chembamba kabisa soli.",
+      "wer": 0.2857142857142857,
+      "ms": 13457
+    },
+    {
+      "file": "6811962267647598124.wav",
+      "ref": "tangu mwaka wa 1966 sandabani zimekuwa mbuga za wanyama pori na inakadiriwa kuwa sasa kuna chui 400 wa royal bengal na kulungu takribani 30,000 katika eneo hilo",
+      "hyp": "Tangu mwaka wa elfu moja miya tisa sitini na sita, sandabani zimekua mbuga za wanyama pori na inakadiriwa kuwa sasa kunachui miyaine wa royo bingal na kulungu takriban elfu telatini katika eneo hilo.",
+      "wer": 0.5714285714285714,
+      "ms": 17078
+    },
+    {
+      "file": "5792460632552153201.wav",
+      "ref": "tangu msingi wa asuncion mnamo 1537 paraguai imeweza kudumisha sifa na utambulisho wake wa kienyeji",
+      "hyp": "Tangu msingi wa Asuskion, mnamo 1537 Paraguay, imeweza kudumisha sifa na utambulisho wake wakienyeji.",
+      "wer": 0.26666666666666666,
+      "ms": 13205
+    },
+    {
+      "file": "7488922360452546160.wav",
+      "ref": "haiko peke yake hata hivyo majaribio na jaribio ni upimaji ambao hutumiwa kuondoa nadharia moja au mbili zinazowezekana kuuliza maswali na kufanya uchunguzi pia huongoza utafiti wa kisayansi",
+      "hyp": "Haiko peke yake hata hivyo. Majaribio na jaribio ni upimaji ambao utumiwa kuondwa na adharia moja au mbilizi na zoweze kana, kuuliza maswali na kufanya uchunguzi pia uongoza utafiti wakisayansi.",
+      "wer": 0.39285714285714285,
+      "ms": 14948
+    },
+    {
+      "file": "15825778944535767984.wav",
+      "ref": "ofisi ya gavana ilisema kumi na tisa wa wale waliojeruhiwa walikuwa maafisa wa polisi",
+      "hyp": "Ofisi ya governor ilisema kuminatisa wa watu wale waliojeruhiwa walikuwa maafisa wa polisi.",
+      "wer": 0.35714285714285715,
+      "ms": 15889
+    },
+    {
+      "file": "11694455165732019468.wav",
+      "ref": "nyumba nyingi kwenye kingo za majengo hayo tata zilijengwa upya ili kuwapa watalii taswira bora ya jinsi zilivyokuwa mwanzoni",
+      "hyp": "Nyumba nyingi kwenye kingo za majengo hayo tata zilijengo wa upia ilikuwa pa watalii taswira bora ya jensye jilivokuwa mwanzoni.",
+      "wer": 0.3684210526315789,
+      "ms": 16306
+    },
+    {
+      "file": "14128661039621087005.wav",
+      "ref": "nomino zote ikiwemo sie kwa wewe daima huanza kwa herufi kubwa hata katika katikati mwa sentensi",
+      "hyp": "Numinu zote ikiwemo siye kwa wewe daima uwanza kwa herufi kubwa hata katika katikati mwasentensi",
+      "wer": 0.3125,
+      "ms": 15636
+    },
+    {
+      "file": "8182700441614840809.wav",
+      "ref": "skrini kadhaa kubwa za televisheni ziliangikwa mahali mbalimbali jijini roma ili kuwezesha watu kutazama sherehe hiyo",
+      "hyp": "Screen katha kubwa za television ziliangu kuwa mahali balimbali jijini Roma. Screen katha kubwa za television ziliangikuwa mahali balimbali jijini Roma ilikuwezesha watu kutazama shereya hiyo.",
+      "wer": 1.125,
+      "ms": 15479
+    },
+    {
+      "file": "6722082163999422493.wav",
+      "ref": "ufini ni mahali pazuri pa uendeshaji mashua.  nchi ya maziwa elfu” ina maelfu ya visiwa pia katika maziwa na katika visiwa vya pwani",
+      "hyp": "Nesini imahali bazuri pa wende shaji mashua. Ndiya maziwa elfu inama elfu ya visiwa pia. Katika maziwa na katika visiwa vya pwani.",
+      "wer": 0.43478260869565216,
+      "ms": 16415
+    },
+    {
+      "file": "15192937030785211196.wav",
+      "ref": "ni mabadiliko ya seli za vijidudu tu ambayo yanaweza kusambazwa kwa watoto huku mabadiliko kwingineko yakiweza kusababisha seli za kifo au saratani",
+      "hyp": "Ni mabadiliko ya seli za wadudu tuwa mbayo ya naweza kusambazo kwa watoto. Huku mabadiliko mingineko ya kiweza kusababisha seli za vifo au saratani.",
+      "wer": 0.45454545454545453,
+      "ms": 16263
+    },
+    {
+      "file": "6727118989156762427.wav",
+      "ref": "aloi kimsingi ni mchanganyiko wa metali mbili au zaidi. usisahau kwamba kuna elementi nyingi kwenye jedwali la elementi",
+      "hyp": "Aloi kimsingi ni mchanga nyiko wa metali mbili au zaidi. Usisau kwamba kuna elementi nyingi katika jeduali la elementi.",
+      "wer": 0.2777777777777778,
+      "ms": 13684
+    },
+    {
+      "file": "12946254843965883100.wav",
+      "ref": "makundi ya simba yanatengenezwa na waume kati ya mmoja na watatu wazima wanaohusiana pamoja na wengi wa kike kama thelathini na mashibli",
+      "hyp": "Makundi ya simba ya natengenezwa na wanaume katia moja na watatu, wazima wanausiana pamoja na wengi wakike kama delathini na mashibli.",
+      "wer": 0.45454545454545453,
+      "ms": 20139
+    },
+    {
+      "file": "10993040792506934247.wav",
+      "ref": "umiliki wa magari kwa wingi pia hupelekea matukio mengi ya ajali za barabarani ambazo hupelekea uvumbuzi wa mbinu mpya katika matibabu za kutengeneza miili iliyovunjika",
+      "hyp": "Umiliki wa magari wa kwa wingi pia upelekea mautukio mengi ya ajali za barabarani ambazo upelekea uvumbuzi wambinu mpia katika matibabu za kutengeneza miili ilio vunjika.",
+      "wer": 0.36,
+      "ms": 16692
+    },
+    {
+      "file": "5838638345719324040.wav",
+      "ref": "pia upande wa kaskazini tembelea hekalu la mama yetu fatima madhabahu mahali maarufu duniani pa maonyesho ya maria",
+      "hyp": "Pio pande wa kaskazini tembelea hekalu la mama yetu mafatima, madhabahu mahali marufu duniani maunyesho ya maria.",
+      "wer": 0.3333333333333333,
+      "ms": 14588
+    },
+    {
+      "file": "12505380043032676956.wav",
+      "ref": "lakini kwa kuwekwa katika  tropiki za juu” digrii chache tu kaskazini mwa istiwai utahitaji kukabiliana na joto jingi kila wakati na jua kali wakati anga ni safi nadra zaidi",
+      "hyp": "Lakini kwa kuwekwa katika tropiki za juu, degree chache tu kaskazini mwa istiwai utahitaji kukabiliana na joto jingi kila wakati. Najua kali wakati anga ni safi. Nadra zaidi.",
+      "wer": 0.10344827586206896,
+      "ms": 15489
+    },
+    {
+      "file": "10352089109043261273.wav",
+      "ref": "hata hivyo asilimia ya xdr-tb katika kikundi kizima cha watu wenye kifua kikuu bado inaonekana kuwa chini watu 6,000 kati ya 330,000 walioambukizwa kwa wakati wowote maalumu katika afrika kusini",
+      "hyp": "Hata hivo asilimia ya FDRTB katika kikundi kizima cha watu wanikifua kiku bando inaonekana kuwa chini. Watu 1130 waliwa mbukizo wakati wawote mahalumu katika Afrika kusini.",
+      "wer": 0.5151515151515151,
+      "ms": 15837
+    },
+    {
+      "file": "10112352765273720289.wav",
+      "ref": "layton alikuwa ameomba mabadiliko ya mswada wa kimazingira wa wahafidhina wakati wa mkutano na pm akiomba  uandishi upya wa undani na mkamilifu” wa mswada wa kimazingira wa chama cha wahafidhina",
+      "hyp": "Leiton alikuwa amiomba mabadiliku ya mswada wa kimazingira wa haifidhina wakati wa mkutano wa PM. Akiomba uandishi upia wa undani na mkamilifu wa mswada wa kimazingira wa chamacha wa haifidhina.",
+      "wer": 0.3,
+      "ms": 15445
+    },
+    {
+      "file": "17133779581209236121.wav",
+      "ref": "hata hivyo hilo si kweli. ingawa kuna kitu kilichoandikwa nyuma ya hati si ramani ya hazina",
+      "hyp": "Hata hiyo hilo sikweli, ngawa kuna kitu kilijuandikuwa nyuma ya hati, hiramani ya hazina.",
+      "wer": 0.4375,
+      "ms": 13805
+    },
+    {
+      "file": "3269473022254190657.wav",
+      "ref": "vingi vya visiwa vidogo ni mataifa huru au vinahusishwa na ufaransa na vinajulikana kama vituo vya mapumziko vya pwani",
+      "hyp": "Vingi vya visiwa bidogo ni mataifa huru au binahosishwa na ufaransa na binajulikana kama vito vya mapumziko vya puani.",
+      "wer": 0.2631578947368421,
+      "ms": 17392
+    }
+  ]
+}

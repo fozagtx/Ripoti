@@ -55,4 +55,51 @@ We tested QVAC's Laya multilingual 322M decision model for this step and dropped
 
 ## Results
 
-_Filled in from `bench/results/*.json` once the benchmarks finish._
+Test machine: Ubuntu 22.04 VM, 8 vCPU (x86-64, no GPU), 31 GB RAM, Node 24, `@qvac/sdk` 0.22.0. The VM had 20–35% CPU steal from the host during these runs, so treat times as an upper bound for this CPU class.
+
+### Kiswahili speech to text (real human speech)
+
+Google FLEURS `sw_ke` test split, first 30 distinct utterances (7.7 min of read speech by Kenyan speakers). Run with `bench/get-fleurs.sh` then `npm run bench:stt -- 30`. Full per-utterance output: `bench/results/stt-turbo.json`.
+
+| Model | WER | CER | Load | Inference / audio length |
+| --- | --- | --- | --- | --- |
+| whisper-large-v3-turbo | 38.7% | 11.5% | 42.8 s | 1.08× (503 s for 464 s of audio) |
+
+Looking at the transcripts, most errors are near-miss spellings and joined words (`wakarne` for `wa karne`, `kunachui` for `kuna chui`), plus numbers written out as words (`elfu moja miya tisa sitini na sita` for `1966`). In one clip of 30 Whisper repeated a sentence, which pushed that clip's WER above 100%. The promoter reviews the form before saving because of these errors.
+
+### Kiswahili read-back (Chatterbox, CPU)
+
+| Text | Synthesis time | Audio length |
+| --- | --- | --- |
+| "Kaya 0142. Dalili za hatari: hawezi kunywa wala kunyonya. Mpe rufaa kwenda kituo cha afya leo." | 213 s | 5.6 s |
+| "Kaya namba 0142." | 59 s | 2.4 s |
+| "Mama ni mjamzito wa miezi saba." | 43 s | 2.0 s |
+
+Model load: 12.5 s. On this CPU, read-back runs 20–40× slower than real time, so it is generated only when the promoter taps **Play read-back**, never as part of saving a visit. One earlier run of the first sentence took 15 s; we could not reproduce that and report the slower figure.
+
+## QVAC integration
+
+`@qvac/sdk` 0.22.0. All QVAC calls are in `server/qvac.ts`; `server/pipeline.ts` chains them for one visit.
+
+| Job | QVAC model constant | Download size | Upstream licence |
+| --- | --- | --- | --- |
+| Speech to text (default) | `WHISPER_LARGE_V3_TURBO` | 1.6 GB | MIT (openai/whisper-large-v3-turbo) |
+| Speech to text (light) | `WHISPER_SMALL_Q8_0` | 0.25 GB | Apache-2.0 (openai/whisper-small) |
+| Form filling + danger-sign evidence (default) | `GEMMA4_4B_MULTIMODAL_Q4_K_M` | 5.4 GB | Apache-2.0 (google/gemma-4-E4B-it) |
+| Form filling (alternative) | `QWEN3_4B_INST_Q4_K_M` | 2.5 GB | Apache-2.0 (Qwen/Qwen3-4B) |
+| Kiswahili read-back | `TTS_T3_MULTILINGUAL_CHATTERBOX_Q4_0` + `TTS_S3GEN_MULTILINGUAL_CHATTERBOX_Q4_0` | 0.35 + 0.79 GB | MIT (ResembleAI/chatterbox) |
+
+Licences were read from each model's Hugging Face card. QVAC downloads the models from its registry on first use and caches them; later runs load from the cache with no network.
+
+How each call is used:
+- `loadModel` + `transcribe` — Whisper, with the language (`sw`/`en`) set at load time. Audio is first converted to 16 kHz mono WAV with ffmpeg (`server/audio.ts`).
+- `completion` with a JSON schema — turns the transcript into the visit form, then lists danger signs with a quote from the note. Spoken Kiswahili numbers are turned into digits first (`server/swnum.ts`).
+- `textToSpeech` — Chatterbox in `sw`, one sentence at a time.
+
+## Built during the hackathon vs reused
+
+Everything in this repo was written during the event. Reused: `@qvac/sdk` and its models, Pears modules (`corestore`, `hyperbee`, `hyperswarm`, `hyperdht`, `protomux`), Hono, React, Vite, Lucide icons, the Inter font, ffmpeg, and Google FLEURS (CC BY 4.0) for the speech benchmark.
+
+## Licence
+
+Apache-2.0. See `LICENSE`.
