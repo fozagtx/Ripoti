@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { swahiliNumeralsToDigits } from './swnum.ts'
+import { digitsToSwahiliWords, swahiliNumeralsToDigits } from './swnum.ts'
 
 test('converts Swahili numerals used in visit notes', () => {
   assert.equal(swahiliNumeralsToDigits('Mtoto wa miezi nane'), 'Mtoto wa miezi 8')
@@ -13,4 +13,9 @@ test('converts Swahili numerals used in visit notes', () => {
 test('leaves unit words alone when not counting', () => {
   assert.equal(swahiliNumeralsToDigits('Mama ana nne'), 'Mama ana nne')
   assert.equal(swahiliNumeralsToDigits('saba'), 'saba')
+})
+
+test('speaks digits as Kiswahili words', () => {
+  assert.equal(digitsToSwahiliWords('Kaya 0142. Mama ni mjamzito wa miezi 7.'), 'Kaya sifuri moja nne mbili. Mama ni mjamzito wa miezi saba.')
+  assert.equal(digitsToSwahiliWords('siku 14, miaka 30'), 'siku kumi na nne, miaka thelathini')
 })

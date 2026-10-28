@@ -15,7 +15,7 @@ import {
 import { DANGER_SIGNS, EVIDENCE_THRESHOLD } from './protocol.ts'
 import { VISIT_SCHEMA, type DangerResult, type VisitForm } from './types.ts'
 import { pcmToWav } from './audio.ts'
-import { swahiliNumeralsToDigits } from './swnum.ts'
+import { digitsToSwahiliWords, swahiliNumeralsToDigits } from './swnum.ts'
 import { sentenceOf, statedDays } from './duration.ts'
 import { groundForm } from './ground.ts'
 import { readbackText } from './readback.ts'
@@ -266,7 +266,7 @@ export async function speak(text: string): Promise<Buffer> {
     const all: number[] = []
     let rate = 24000
     for (const sentence of sentences(text)) {
-      const r = textToSpeech({ modelId: id, text: sentence, inputType: 'text', stream: false } as never) as unknown as {
+      const r = textToSpeech({ modelId: id, text: digitsToSwahiliWords(sentence), inputType: 'text', stream: false } as never) as unknown as {
         buffer: Promise<number[]>
         sampleRate: Promise<number>
       }

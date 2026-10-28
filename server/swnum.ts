@@ -18,3 +18,18 @@ export function swahiliNumeralsToDigits(text: string): string {
     .replace(new RegExp(`\\b(${tens})\\b`, 'gi'), (t: string) => String(TENS[t.toLowerCase()]))
     .replace(new RegExp(`\\b(miezi|mwezi|miaka|mwaka|siku|wiki|wiki|watoto|mtoto|namba)\\s+(${units})\\b`, 'gi'), (_, w: string, u: string) => `${w} ${UNITS[u.toLowerCase()]}`)
 }
+
+const DIGIT = ['sifuri', 'moja', 'mbili', 'tatu', 'nne', 'tano', 'sita', 'saba', 'nane', 'tisa']
+const TEN_WORDS = ['', 'kumi', 'ishirini', 'thelathini', 'arobaini', 'hamsini', 'sitini', 'sabini', 'themanini', 'tisini']
+
+// Digits -> Kiswahili words for speech: Chatterbox mumbles raw digits.
+// Codes like 0142 are read digit by digit; small counts as numbers.
+export function digitsToSwahiliWords(text: string): string {
+  return text.replace(/\d+/g, (d) => {
+    const n = Number(d)
+    if (d.length > 2 || (d.length === 2 && d[0] === '0')) return [...d].map((c) => DIGIT[Number(c)]).join(' ')
+    if (n < 10) return DIGIT[n]
+    const t = TEN_WORDS[Math.floor(n / 10)]
+    return n % 10 ? `${t} na ${DIGIT[n % 10]}` : t
+  })
+}
