@@ -16,7 +16,7 @@ import { DANGER_SIGNS, EVIDENCE_THRESHOLD } from './protocol.ts'
 import { VISIT_SCHEMA, type DangerResult, type VisitForm } from './types.ts'
 import { pcmToWav } from './audio.ts'
 import { digitsToSwahiliWords, swahiliNumeralsToDigits } from './swnum.ts'
-import { sentenceOf, statedDays } from './duration.ts'
+import { durationEvidence, sentenceOf, statedDays } from './duration.ts'
 import { groundForm } from './ground.ts'
 import { readbackText } from './readback.ts'
 export { readbackText }
@@ -248,6 +248,8 @@ ${GLOSSARY}`,
   const found = (JSON.parse(final.contentText).found ?? []) as { id: string; evidence: string }[]
   return signs.map((s) => {
     const hit = found.filter((f) => f.id === s.id).map((f) => ({ ...f, support: evidenceSupport(f.evidence, note) })).sort((a, b) => b.support - a.support)[0]
+    const backup = !hit && s.minDays && s.symptom ? durationEvidence(s.symptom, s.minDays, note) : null
+    if (backup) return { id: s.id, label: s.label, labelSw: s.labelSw, evidence: backup, support: 1, flagged: true }
     const support = hit?.support ?? 0
     const longEnough = !s.minDays || (!!hit && (statedDays(sentenceOf(hit.evidence, note)) ?? 0) >= s.minDays)
     return { id: s.id, label: s.label, labelSw: s.labelSw, evidence: hit?.evidence ?? '', support, flagged: !!hit && support >= EVIDENCE_THRESHOLD && longEnough }

@@ -2,7 +2,7 @@ import type { DangerResult, VisitForm } from './types.ts'
 
 export function readbackText(form: VisitForm, danger: DangerResult[]): string {
   const flagged = danger.filter((d) => d.flagged)
-  const parts = [`Kaya ${form.householdId || 'bila namba'}.`]
+  const parts = [form.householdId ? `Kaya namba ${form.householdId}.` : 'Kaya bila namba.']
   if (flagged.length) {
     parts.push(`Dalili za hatari: ${flagged.map((d) => d.labelSw).join(', ')}.`)
     parts.push('Mpe rufaa kwenda kituo cha afya leo.')

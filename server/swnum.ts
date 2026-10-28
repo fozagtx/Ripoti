@@ -27,7 +27,7 @@ const TEN_WORDS = ['', 'kumi', 'ishirini', 'thelathini', 'arobaini', 'hamsini', 
 export function digitsToSwahiliWords(text: string): string {
   return text.replace(/\d+/g, (d) => {
     const n = Number(d)
-    if (d.length > 2 || (d.length === 2 && d[0] === '0')) return [...d].map((c) => DIGIT[Number(c)]).join(' ')
+    if (d.length > 2 || (d.length === 2 && d[0] === '0')) return [...d].map((c) => DIGIT[Number(c)]).join(', ')
     if (n < 10) return DIGIT[n]
     const t = TEN_WORDS[Math.floor(n / 10)]
     return n % 10 ? `${t} na ${DIGIT[n % 10]}` : t

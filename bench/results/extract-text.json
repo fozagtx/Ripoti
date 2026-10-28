@@ -8,7 +8,7 @@
     },
     "loadMs": {
       "stt": null,
-      "llm": 30831,
+      "llm": 27194,
       "tts": null
     },
     "cases": 16,
@@ -27,10 +27,10 @@
     },
     "referralDecisionAccuracy": 1,
     "meanStageMs": {
-      "extract": 60917,
-      "danger": 23101
+      "extract": 31825,
+      "danger": 12471
     },
-    "peakRssMb": 142
+    "peakRssMb": 145
   },
   "rows": [
     {
@@ -57,8 +57,8 @@
         "gestationMonths": 7,
         "vaccinesUpToDate": true,
         "referralGiven": false,
-        "followUp": "Follow up as needed.",
-        "summary": "Household visit for child with fever and inability to breastfeed. Mother is 7 months pregnant. Child's vaccines are up to date."
+        "followUp": "",
+        "summary": "The 8-month-old child has had a high fever since yesterday and cannot breastfeed. The mother is 7 months pregnant."
       },
       "flagged": [
         "cannot_feed"
@@ -69,11 +69,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 206953
+          "ms": 59262
         },
         {
           "stage": "danger",
-          "ms": 40419
+          "ms": 19425
         }
       ]
     },
@@ -87,7 +87,7 @@
             "role": "child",
             "ageMonths": 36,
             "symptoms": [
-              "mild cough"
+              "cough"
             ]
           }
         ],
@@ -95,19 +95,19 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "Advised mother to give plenty of water.",
-        "summary": "Three-year-old child has a mild cough for 2 days. Eats well and has no fever."
+        "followUp": "",
+        "summary": "Child has a slight cough for 2 days. Eats well and has no fever. Advised mother to give plenty of water."
       },
       "flagged": [],
       "expected": [],
       "timings": [
         {
           "stage": "extract",
-          "ms": 57798
+          "ms": 27574
         },
         {
           "stage": "danger",
-          "ms": 17424
+          "ms": 8696
         }
       ]
     },
@@ -129,8 +129,8 @@
         "gestationMonths": 6,
         "vaccinesUpToDate": null,
         "referralGiven": true,
-        "followUp": "Referred to health center.",
-        "summary": "Mother is 6 months pregnant and experiencing vaginal bleeding since the morning. A referral was given to the health center."
+        "followUp": "",
+        "summary": "Mother is pregnant at 6 months and is experiencing vaginal bleeding since the morning. Referred to health center."
       },
       "flagged": [
         "vaginal_bleeding"
@@ -141,11 +141,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 60015
+          "ms": 53992
         },
         {
           "stage": "danger",
-          "ms": 13439
+          "ms": 18104
         }
       ]
     },
@@ -168,8 +168,8 @@
         "gestationMonths": null,
         "vaccinesUpToDate": false,
         "referralGiven": false,
-        "followUp": "Child had convulsions last night and is very lethargic today.",
-        "summary": "Child of two years experienced convulsions last night and is very lethargic today. Has not received measles vaccine."
+        "followUp": "",
+        "summary": "A 2-year-old child experienced convulsions last night and is very lethargic today. The child has not received the measles vaccine."
       },
       "flagged": [
         "convulsions",
@@ -182,11 +182,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 31550
+          "ms": 37762
         },
         {
           "stage": "danger",
-          "ms": 30463
+          "ms": 18299
         }
       ]
     },
@@ -210,8 +210,8 @@
         "gestationMonths": 8,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "Not mentioned",
-        "summary": "Mother in household 0522 is pregnant at 8 months and complains of severe headache, blurred vision, and swollen legs."
+        "followUp": "",
+        "summary": "Mother in household 0522 is 8 months pregnant and complains of severe headache, blurred vision, and swollen legs."
       },
       "flagged": [
         "severe_headache"
@@ -222,11 +222,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 58452
+          "ms": 38008
         },
         {
           "stage": "danger",
-          "ms": 19619
+          "ms": 15570
         }
       ]
     },
@@ -248,19 +248,19 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "Given ORS and zinc.",
-        "summary": "18-month-old child has diarrhoea for 3 days without blood. Still drinking and eating."
+        "followUp": "",
+        "summary": "Child of 18 months has had diarrhoea for 3 days without blood. Still drinking and eating. ORS and zinc were given."
       },
       "flagged": [],
       "expected": [],
       "timings": [
         {
           "stage": "extract",
-          "ms": 44097
+          "ms": 37835
         },
         {
           "stage": "danger",
-          "ms": 8719
+          "ms": 9590
         }
       ]
     },
@@ -283,8 +283,8 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "Follow up as needed",
-        "summary": "A four-year-old child is vomiting everything they eat since yesterday and has a fever."
+        "followUp": "",
+        "summary": "Child of 4 years old has been vomiting everything since yesterday and has a fever."
       },
       "flagged": [
         "vomits_everything"
@@ -295,11 +295,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 26072
+          "ms": 33815
         },
         {
           "stage": "danger",
-          "ms": 18974
+          "ms": 18119
         }
       ]
     },
@@ -327,8 +327,8 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "Mother delivered at home.",
-        "summary": "Newborn of 1 week is not breastfeeding well and has yellow palms. Mother delivered at home."
+        "followUp": "",
+        "summary": "Newborn of 1 week is not breastfeeding well and has yellow palms. Mother gave birth at home."
       },
       "flagged": [
         "newborn_not_feeding",
@@ -341,11 +341,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 42869
+          "ms": 35484
         },
         {
           "stage": "danger",
-          "ms": 25613
+          "ms": 17620
         }
       ]
     },
@@ -359,7 +359,7 @@
             "role": "mother",
             "ageMonths": null,
             "symptoms": [
-              "pregnant"
+              "feeling well"
             ]
           },
           {
@@ -372,19 +372,19 @@
         "gestationMonths": 5,
         "vaccinesUpToDate": true,
         "referralGiven": false,
-        "followUp": "Attended clinic three times.",
-        "summary": "The mother is pregnant and feeling well. Her five-year-old child is in good health and has complete vaccinations."
+        "followUp": "",
+        "summary": "Mother is pregnant at 5 months and feels well, having attended clinic three times. Her 5-year-old child is in good health and has complete vaccinations."
       },
       "flagged": [],
       "expected": [],
       "timings": [
         {
           "stage": "extract",
-          "ms": 51551
+          "ms": 28585
         },
         {
           "stage": "danger",
-          "ms": 11071
+          "ms": 8453
         }
       ]
     },
@@ -407,8 +407,8 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": true,
-        "followUp": "To be seen for tuberculosis testing",
-        "summary": "Elder in the household has been coughing for 3 weeks and is losing weight. Referred for tuberculosis testing."
+        "followUp": "",
+        "summary": "Elder has cough for 3 weeks and weight loss. Referred for tuberculosis testing."
       },
       "flagged": [
         "cough_two_weeks"
@@ -419,11 +419,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 24618
+          "ms": 25568
         },
         {
           "stage": "danger",
-          "ms": 23030
+          "ms": 10762
         }
       ]
     },
@@ -447,8 +447,8 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "Follow up as needed",
-        "summary": "9-month-old child presenting with rapid breathing, chest indrawing, and fever since two days ago."
+        "followUp": "",
+        "summary": "9-month-old child presents with rapid breathing, chest indrawing, and fever since two days ago."
       },
       "flagged": [
         "chest_indrawing"
@@ -459,11 +459,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 40791
+          "ms": 24632
         },
         {
           "stage": "danger",
-          "ms": 24961
+          "ms": 16360
         }
       ]
     },
@@ -479,21 +479,14 @@
             "symptoms": [
               "pregnant"
             ]
-          },
-          {
-            "role": "other",
-            "ageMonths": null,
-            "symptoms": [
-              "not moving"
-            ]
           }
         ],
         "pregnant": true,
         "gestationMonths": 9,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "The child in the womb has not been moving since yesterday.",
-        "summary": "Mother is pregnant (9 months) and reports that the baby in the womb has not been moving since yesterday."
+        "followUp": "",
+        "summary": "The mother is pregnant at 9 months and reports that the baby in the womb has not been moving since yesterday."
       },
       "flagged": [
         "reduced_movement"
@@ -504,11 +497,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 89646
+          "ms": 21781
         },
         {
           "stage": "danger",
-          "ms": 90866
+          "ms": 9225
         }
       ]
     },
@@ -530,8 +523,8 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "Monitor fever",
-        "summary": "Three-year-old child has had a fever for 10 days. Appetite remains good."
+        "followUp": "",
+        "summary": "Child of 3 years has had fever for 10 days. Still eating well."
       },
       "flagged": [
         "fever_long"
@@ -542,11 +535,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 130289
+          "ms": 21192
         },
         {
           "stage": "danger",
-          "ms": 16676
+          "ms": 7003
         }
       ]
     },
@@ -568,19 +561,19 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "Given fever medicine.",
-        "summary": "6-month-old child has had a fever for 3 days. Breastfeeding well. Fever medicine was administered."
+        "followUp": "",
+        "summary": "Child of 6 months has had fever for 3 days. Breastfeeding well. Given fever medicine."
       },
       "flagged": [],
       "expected": [],
       "timings": [
         {
           "stage": "extract",
-          "ms": 25604
+          "ms": 21497
         },
         {
           "stage": "danger",
-          "ms": 8013
+          "ms": 7357
         }
       ]
     },
@@ -602,19 +595,19 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "In one week",
-        "summary": "Elder has cough for 1 week, no fever."
+        "followUp": "",
+        "summary": "Elder has had a cough for 1 week. No fever."
       },
       "flagged": [],
       "expected": [],
       "timings": [
         {
           "stage": "extract",
-          "ms": 35514
+          "ms": 20495
         },
         {
           "stage": "danger",
-          "ms": 5624
+          "ms": 5379
         }
       ]
     },
@@ -637,8 +630,8 @@
         "gestationMonths": null,
         "vaccinesUpToDate": null,
         "referralGiven": false,
-        "followUp": "since yesterday",
-        "summary": "Two-year-old child has diarrhoea with blood in stool since yesterday."
+        "followUp": "",
+        "summary": "Child of 2 years has diarrhoea and blood in stool since yesterday."
       },
       "flagged": [
         "diarrhoea_blood"
@@ -649,11 +642,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 48856
+          "ms": 21715
         },
         {
           "stage": "danger",
-          "ms": 14712
+          "ms": 9569
         }
       ]
     }

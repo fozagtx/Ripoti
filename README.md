@@ -76,12 +76,13 @@ Looking at the transcripts, most errors are near-miss spellings and joined words
 | Household number, pregnancy, months pregnant, vaccines | 16/16 correct each |
 | Danger signs | 13 true positives, 0 false positives, 0 missed |
 | Refer / don't refer decision | 16/16 correct |
-| Mean time per visit | 61 s form + 23 s danger check (Gemma load 31 s, once) |
+| Mean time per visit | 32 s form + 12 s danger check (Gemma load 31 s, once) |
 | QVAC worker memory | 7.3 GB peak RSS with Gemma 4 4B loaded |
 
 Read these numbers with care:
 - We wrote the notes ourselves (neutral household numbers, no real patients). They are clean text, not speech, so this measures the LLM step alone. Real recordings add the speech errors measured above.
 - The first run on cases v01–v12 had 3 false positives, all "fever for 7 days or more" flagged for a fever that started yesterday or the day before. We then added a rule: a sign defined by a duration needs that duration stated in the note (`server/duration.ts`). The 0 false positives come after that fix, measured on the same 12 cases plus 4 new ones (v13–v16). That is not a held-out test.
+- Two more guards came after the speech test showed the model inventing numbers: ages and months pregnant are dropped unless that number is in the note (`server/ground.ts`), and for fever and cough a stated long duration flags the sign directly (`durationEvidence` in `server/duration.ts`), so a missed LLM answer cannot hide it. The table is the re-run on the same 16 notes with both guards.
 - 16 cases is a small sample. Treat this as a smoke test, not a clinical validation.
 
 ### Offline check
@@ -92,7 +93,7 @@ The core AI was run with the network fully removed: `sudo unshare -n` gives the 
 
 | Text | Synthesis time | Audio length |
 | --- | --- | --- |
-| "Kaya 0142. Dalili za hatari: hawezi kunywa wala kunyonya. Mpe rufaa kwenda kituo cha afya leo." | 213 s | 5.6 s |
+| "Kaya 0142. Dalili za hatari: hawezi kunywa wala kunyonya. Mpe rufaa kwenda kituo cha afya leo." (before digits were spoken as words) | 213 s | 5.6 s |
 | "Kaya namba 0142." | 59 s | 2.4 s |
 | "Mama ni mjamzito wa miezi saba." | 43 s | 2.0 s |
 

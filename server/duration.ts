@@ -34,3 +34,14 @@ export function sentenceOf(evidence: string, note: string): string {
   }
   return best
 }
+
+// A note sentence that names the symptom (not negated) with a long enough
+// stated duration. Backs up the LLM for duration-defined danger signs.
+export function durationEvidence(symptom: RegExp, minDays: number, note: string): string | null {
+  for (const s of note.split(/(?<=[.!?])\s+/)) {
+    const m = s.match(symptom)
+    if (!m || /\b(hana|hakuna|no|not|without|bila)\s*$/i.test(s.slice(0, m.index))) continue
+    if ((statedDays(s) ?? 0) >= minDays) return s.trim()
+  }
+  return null
+}

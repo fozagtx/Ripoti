@@ -16,6 +16,6 @@ test('leaves unit words alone when not counting', () => {
 })
 
 test('speaks digits as Kiswahili words', () => {
-  assert.equal(digitsToSwahiliWords('Kaya 0142. Mama ni mjamzito wa miezi 7.'), 'Kaya sifuri moja nne mbili. Mama ni mjamzito wa miezi saba.')
+  assert.equal(digitsToSwahiliWords('Kaya 0142. Mama ni mjamzito wa miezi 7.'), 'Kaya sifuri, moja, nne, mbili. Mama ni mjamzito wa miezi saba.')
   assert.equal(digitsToSwahiliWords('siku 14, miaka 30'), 'siku kumi na nne, miaka thelathini')
 })

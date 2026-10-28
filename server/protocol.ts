@@ -14,6 +14,8 @@ export interface DangerSign {
   instruction: string
   // Signs defined by how long they have lasted; the note must state a duration this long.
   minDays?: number
+  // Words for the symptom, so a stated duration can be checked without the LLM.
+  symptom?: RegExp
 }
 
 export const DANGER_SIGNS: DangerSign[] = [
@@ -22,7 +24,7 @@ export const DANGER_SIGNS: DangerSign[] = [
   { id: 'convulsions', group: 'child', label: 'Convulsions', labelSw: 'Degedege', instruction: 'A child has convulsions or fits.' },
   { id: 'lethargic', group: 'child', label: 'Very sleepy or unconscious', labelSw: 'Amelegea au amepoteza fahamu', instruction: 'A child is unusually sleepy, lethargic or unconscious.' },
   { id: 'chest_indrawing', group: 'child', label: 'Chest indrawing / fast breathing', labelSw: 'Kupumua kwa shida au haraka', instruction: 'A child has fast or difficult breathing or chest indrawing.' },
-  { id: 'fever_long', group: 'child', label: 'Fever for 7 days or more', labelSw: 'Homa kwa siku saba au zaidi', instruction: 'A child has had fever for seven days or more.', minDays: 7 },
+  { id: 'fever_long', group: 'child', label: 'Fever for 7 days or more', labelSw: 'Homa kwa siku saba au zaidi', instruction: 'A child has had fever for seven days or more.', minDays: 7, symptom: /\b(homa|fever)\b/i },
   { id: 'diarrhoea_blood', group: 'child', label: 'Blood in stool / diarrhoea 14+ days', labelSw: 'Damu kwenye choo au kuhara siku 14+', instruction: 'A child has blood in the stool or diarrhoea for fourteen days or more.' },
   { id: 'severe_malnutrition', group: 'child', label: 'Red MUAC or swelling of both feet', labelSw: 'MUAC nyekundu au uvimbe wa miguu yote', instruction: 'A child has a red MUAC band reading or swelling of both feet.' },
   { id: 'vaginal_bleeding', group: 'pregnancy', label: 'Vaginal bleeding', labelSw: 'Kutokwa na damu ukeni', instruction: 'A pregnant woman has vaginal bleeding.' },
@@ -34,7 +36,7 @@ export const DANGER_SIGNS: DangerSign[] = [
   { id: 'newborn_not_feeding', group: 'newborn', label: 'Newborn not feeding well', labelSw: 'Mtoto mchanga hanyonyi vizuri', instruction: 'A newborn baby is not feeding well.' },
   { id: 'newborn_cold_hot', group: 'newborn', label: 'Newborn too hot or too cold', labelSw: 'Mtoto mchanga ana joto au baridi sana', instruction: 'A newborn baby feels too hot or too cold.' },
   { id: 'newborn_yellow', group: 'newborn', label: 'Yellow palms or soles', labelSw: 'Viganja au nyayo za njano', instruction: 'A newborn baby has yellow palms, soles or eyes.' },
-  { id: 'cough_two_weeks', group: 'general', label: 'Cough for 2 weeks or more', labelSw: 'Kikohozi kwa wiki mbili au zaidi', instruction: 'Someone has had a cough for two weeks or more.', minDays: 14 },
+  { id: 'cough_two_weeks', group: 'general', label: 'Cough for 2 weeks or more', labelSw: 'Kikohozi kwa wiki mbili au zaidi', instruction: 'Someone has had a cough for two weeks or more.', minDays: 14, symptom: /\b(kikohozi|cough(ing)?)\b/i },
 ]
 
 // Share of evidence words that must appear in the note.
