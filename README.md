@@ -21,7 +21,9 @@ Optional environment overrides:
 | Variable | Values | Default |
 | --- | --- | --- |
 | `RIPOTI_STT` | `turbo` (whisper-large-v3-turbo), `small` (whisper-small q8) | `turbo` |
-| `RIPOTI_LLM` | `gemma4b` (Gemma 4 4B), `qwen4b` (Qwen3-4B) | `gemma4b` |
+| `RIPOTI_LLM` | `gemma4b` (Gemma 4 4B), `gemma2b` (Gemma 4 2B), `qwen4b` (Qwen3-4B) | `gemma4b` |
+| `RIPOTI_LIVE_STT` | Live-caption model: `small`, `turbo` | `small` |
+| `RIPOTI_MEMORY` | `lean` (one model in memory at a time) or `full` (keep models loaded) | `lean` under 24 GB RAM, else `full` |
 | `RIPOTI_WARM` | `0` to load models on first use instead of at start | `1` |
 | `PORT` | HTTP port | `4747` |
 
@@ -78,6 +80,7 @@ Looking at the transcripts, most errors are near-miss spellings and joined words
 | Refer / don't refer decision | 16/16 correct |
 | Mean time per visit | 32 s form + 12 s danger check (Gemma load 31 s, once) |
 | QVAC worker memory | 7.3 GB peak RSS with Gemma 4 4B loaded |
+| Gemma 4 2B on the same notes | danger signs 11/13 found, 1 false alarm; vaccines 81%; refer decision 15/16; 27 s form + 8 s danger check. Kept as an option, not the default |
 
 Read these numbers with care:
 - We wrote the notes ourselves (neutral household numbers, no real patients). They are clean text, not speech, so this measures the LLM step alone. Real recordings add the speech errors measured above.
@@ -98,6 +101,15 @@ The core AI was run with the network fully removed: `sudo unshare -n` gives the 
 | "Mama ni mjamzito wa miezi saba." | 43 s | 2.0 s |
 
 Model load: 12.5 s. On this CPU, read-back runs 20–40× slower than real time, so it is generated only when the promoter taps **Play read-back**, never as part of saving a visit. One earlier run of the first sentence took 15 s; we could not reproduce that and report the slower figure.
+
+
+## Live transcription and 16 GB laptops
+
+**Live captions.** Tap record and speak. The browser streams 16 kHz audio to the local server, which feeds QVAC `transcribeStream` with Silero VAD (`VAD_SILERO_5_1_2`) and Whisper small. Each phrase appears when the speaker pauses (first phrase about 8 s after starting in the browser test, including model load). Whisper large-v3-turbo ran about 2x slower than speech on this CPU, so it is not used for captions. When you stop, the full recording is transcribed again with large-v3-turbo and that transcript fills the form.
+
+**Memory.** Below 24 GB RAM, Ripoti runs in lean mode: it loads only the model for the current step (speech, form, or read-back) and unloads it before the next. On start it only downloads/caches models; it does not keep them loaded. Measured: one live visit (stream, re-transcribe, form, danger check) ran under a hard 12 GB cgroup limit with no swap (`systemd-run -p MemoryMax=12G -p MemorySwapMax=0`, page cache dropped first) and finished; peak resident memory of the Ripoti processes was 7.8 GB, mostly Gemma 4 4B. That leaves about 4 GB of a 16 GB laptop for the OS and browser. Not tested on a physical 16 GB laptop.
+
+**Fit check.** **Models & device** shows memory mode, RAM, QVAC worker memory, CPU/GPU, and QVAC `assessModelFit` (via `getSystemResources`). The verdict is advisory; on the test VM (no GPU) QVAC returns `unknown`, shown as "QVAC can't say yet", which does not confirm or rule out a fit.
 
 ## QVAC integration
 
