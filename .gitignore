@@ -1,0 +1,8 @@
+node_modules/
+dist/
+data/
+scratch/
+*.log
+*.err
+.env
+bench/audio/
