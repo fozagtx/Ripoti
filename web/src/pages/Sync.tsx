@@ -56,7 +56,7 @@ export function Sync() {
           </div>
           {(error || st?.error) && <div className="error">{error ?? st?.error}</div>}
         </div>
-        <div className="card stack">
+        <div className="card tint stack">
           <div>
             <h2>Status</h2>
             <p className="sub">{st?.running ? `Running as ${st.role} on team “${st.team}”` : 'Stopped'}</p>
@@ -64,7 +64,7 @@ export function Sync() {
           {st?.running && st.role === 'supervisor' && (
             <div>
               <div className="small muted">Promoters enter this supervisor address</div>
-              <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em' }}>{st.supervisorAddress}</div>
+              <div className="big-address">{st.supervisorAddress}</div>
             </div>
           )}
           <div className="small muted">Local addresses: {st?.localAddresses.join(', ') || 'none — join a hotspot or Wi-Fi'}</div>
@@ -82,7 +82,7 @@ export function Sync() {
             <tbody>
               {st.peers.map((p) => (
                 <tr key={p.key}>
-                  <td><b>{p.device}</b><div className="mono muted">{p.key.slice(0, 16)}…</div></td>
+                  <td><span className="hh">{p.device}</span><div className="mono muted">{p.key.slice(0, 16)}…</div></td>
                   <td>{p.role}</td>
                   <td>{p.connected ? <span className="pill ok">Connected</span> : <span className="pill">Offline</span>}</td>
                   <td>{p.visits}</td>

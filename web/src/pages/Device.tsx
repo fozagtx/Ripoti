@@ -17,7 +17,7 @@ export function Device() {
             <h2>Local models (QVAC)</h2>
             <p className="sub">Downloaded once, then run with the network off.</p>
           </div>
-          <button className="btn" onClick={() => api.warm()}>Load all models</button>
+          <button className="btn outline" onClick={() => api.warm()}>Load all models</button>
         </div>
         <table className="table">
           <thead><tr><th>Job</th><th>Model</th><th>Status</th><th>Load time</th></tr></thead>
@@ -44,10 +44,10 @@ export function Device() {
         </table>
       </div>
       <div className="grid g4">
-        <div className="card stat"><div className="k">System</div><div className="v" style={{ fontSize: 18 }}>{sys.platform} {sys.release.split('-')[0]}</div></div>
+        <div className="card stat"><div className="k">System</div><div className="v small-v">{sys.platform} {sys.release.split('-')[0]}</div></div>
         <div className="card stat"><div className="k">CPU threads</div><div className="v">{sys.cpus}</div></div>
-        <div className="card stat"><div className="k">Memory free / total</div><div className="v" style={{ fontSize: 20 }}>{fmtBytes(sys.freeMem)} / {fmtBytes(sys.totalMem)}</div></div>
-        <div className="card stat"><div className="k">Ripoti server memory</div><div className="v" style={{ fontSize: 20 }}>{fmtBytes(sys.rss)}</div></div>
+        <div className="card stat"><div className="k">Memory free / total</div><div className="v small-v">{fmtBytes(sys.freeMem)} / {fmtBytes(sys.totalMem)}</div></div>
+        <div className="card stat"><div className="k">Ripoti server memory</div><div className="v small-v">{fmtBytes(sys.rss)}</div></div>
       </div>
       <div className="card">
         <h2>Danger-sign checklist</h2>
