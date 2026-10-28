@@ -67,6 +67,23 @@ Google FLEURS `sw_ke` test split, first 30 distinct utterances (7.7 min of read 
 
 Looking at the transcripts, most errors are near-miss spellings and joined words (`wakarne` for `wa karne`, `kunachui` for `kuna chui`), plus numbers written out as words (`elfu moja miya tisa sitini na sita` for `1966`). In one clip of 30 Whisper repeated a sentence, which pushed that clip's WER above 100%. The promoter reviews the form before saving because of these errors.
 
+### Visit form and danger signs
+
+`npm run bench:extract -- text` runs the 16 Kiswahili visit notes in `bench/cases.json` through extraction and the danger-sign check (Gemma 4 4B). Per-case output: `bench/results/extract-text.json`.
+
+| Measure | Result |
+| --- | --- |
+| Household number, pregnancy, months pregnant, vaccines | 16/16 correct each |
+| Danger signs | 13 true positives, 0 false positives, 0 missed |
+| Refer / don't refer decision | 16/16 correct |
+| Mean time per visit | 61 s form + 23 s danger check (Gemma load 31 s, once) |
+| QVAC worker memory | 7.3 GB peak RSS with Gemma 4 4B loaded |
+
+Read these numbers with care:
+- We wrote the notes ourselves (neutral household numbers, no real patients). They are clean text, not speech, so this measures the LLM step alone. Real recordings add the speech errors measured above.
+- The first run on cases v01–v12 had 3 false positives, all "fever for 7 days or more" flagged for a fever that started yesterday or the day before. We then added a rule: a sign defined by a duration needs that duration stated in the note (`server/duration.ts`). The 0 false positives come after that fix, measured on the same 12 cases plus 4 new ones (v13–v16). That is not a held-out test.
+- 16 cases is a small sample. Treat this as a smoke test, not a clinical validation.
+
 ### Kiswahili read-back (Chatterbox, CPU)
 
 | Text | Synthesis time | Audio length |

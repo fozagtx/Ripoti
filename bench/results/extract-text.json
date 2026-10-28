@@ -8,10 +8,10 @@
     },
     "loadMs": {
       "stt": null,
-      "llm": 29609,
+      "llm": 30831,
       "tts": null
     },
-    "cases": 12,
+    "cases": 16,
     "fieldAccuracy": {
       "householdId": 1,
       "pregnant": 1,
@@ -19,18 +19,18 @@
       "vaccinesUpToDate": 1
     },
     "dangerSigns": {
-      "precision": 0.7857142857142857,
+      "precision": 1,
       "recall": 1,
-      "truePositives": 11,
-      "falsePositives": 3,
+      "truePositives": 13,
+      "falsePositives": 0,
       "falseNegatives": 0
     },
     "referralDecisionAccuracy": 1,
     "meanStageMs": {
-      "extract": 93537,
-      "danger": 31196
+      "extract": 60917,
+      "danger": 23101
     },
-    "peakRssMb": 141
+    "peakRssMb": 142
   },
   "rows": [
     {
@@ -61,8 +61,7 @@
         "summary": "Household visit for child with fever and inability to breastfeed. Mother is 7 months pregnant. Child's vaccines are up to date."
       },
       "flagged": [
-        "cannot_feed",
-        "fever_long"
+        "cannot_feed"
       ],
       "expected": [
         "cannot_feed"
@@ -70,11 +69,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 102068
+          "ms": 206953
         },
         {
           "stage": "danger",
-          "ms": 54466
+          "ms": 40419
         }
       ]
     },
@@ -104,11 +103,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 64461
+          "ms": 57798
         },
         {
           "stage": "danger",
-          "ms": 10300
+          "ms": 17424
         }
       ]
     },
@@ -142,11 +141,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 50545
+          "ms": 60015
         },
         {
           "stage": "danger",
-          "ms": 17564
+          "ms": 13439
         }
       ]
     },
@@ -183,11 +182,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 40184
+          "ms": 31550
         },
         {
           "stage": "danger",
-          "ms": 112673
+          "ms": 30463
         }
       ]
     },
@@ -223,11 +222,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 298616
+          "ms": 58452
         },
         {
           "stage": "danger",
-          "ms": 37304
+          "ms": 19619
         }
       ]
     },
@@ -257,11 +256,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 178519
+          "ms": 44097
         },
         {
           "stage": "danger",
-          "ms": 26941
+          "ms": 8719
         }
       ]
     },
@@ -288,8 +287,7 @@
         "summary": "A four-year-old child is vomiting everything they eat since yesterday and has a fever."
       },
       "flagged": [
-        "vomits_everything",
-        "fever_long"
+        "vomits_everything"
       ],
       "expected": [
         "vomits_everything"
@@ -297,11 +295,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 185258
+          "ms": 26072
         },
         {
           "stage": "danger",
-          "ms": 17024
+          "ms": 18974
         }
       ]
     },
@@ -343,11 +341,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 36715
+          "ms": 42869
         },
         {
           "stage": "danger",
-          "ms": 29948
+          "ms": 25613
         }
       ]
     },
@@ -382,11 +380,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 40458
+          "ms": 51551
         },
         {
           "stage": "danger",
-          "ms": 11612
+          "ms": 11071
         }
       ]
     },
@@ -421,11 +419,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 37793
+          "ms": 24618
         },
         {
           "stage": "danger",
-          "ms": 17050
+          "ms": 23030
         }
       ]
     },
@@ -453,8 +451,7 @@
         "summary": "9-month-old child presenting with rapid breathing, chest indrawing, and fever since two days ago."
       },
       "flagged": [
-        "chest_indrawing",
-        "fever_long"
+        "chest_indrawing"
       ],
       "expected": [
         "chest_indrawing"
@@ -462,11 +459,11 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 37046
+          "ms": 40791
         },
         {
           "stage": "danger",
-          "ms": 22871
+          "ms": 24961
         }
       ]
     },
@@ -507,11 +504,156 @@
       "timings": [
         {
           "stage": "extract",
-          "ms": 50786
+          "ms": 89646
         },
         {
           "stage": "danger",
-          "ms": 16598
+          "ms": 90866
+        }
+      ]
+    },
+    {
+      "id": "v13",
+      "transcript": "Kaya namba 1310. Mtoto wa miaka mitatu ana homa kwa siku kumi sasa. Bado anakula vizuri.",
+      "form": {
+        "householdId": "1310",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 36,
+            "symptoms": [
+              "fever"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "Monitor fever",
+        "summary": "Three-year-old child has had a fever for 10 days. Appetite remains good."
+      },
+      "flagged": [
+        "fever_long"
+      ],
+      "expected": [
+        "fever_long"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 130289
+        },
+        {
+          "stage": "danger",
+          "ms": 16676
+        }
+      ]
+    },
+    {
+      "id": "v14",
+      "transcript": "Kaya namba 1422. Mtoto wa miezi sita ana homa kwa siku tatu. Ananyonya vizuri. Nimempa dawa ya homa.",
+      "form": {
+        "householdId": "1422",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 6,
+            "symptoms": [
+              "fever"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "Given fever medicine.",
+        "summary": "6-month-old child has had a fever for 3 days. Breastfeeding well. Fever medicine was administered."
+      },
+      "flagged": [],
+      "expected": [],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 25604
+        },
+        {
+          "stage": "danger",
+          "ms": 8013
+        }
+      ]
+    },
+    {
+      "id": "v15",
+      "transcript": "Kaya namba 1503. Bibi ana kikohozi kwa wiki moja. Hana homa.",
+      "form": {
+        "householdId": "1503",
+        "members": [
+          {
+            "role": "elder",
+            "ageMonths": null,
+            "symptoms": [
+              "cough"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "In one week",
+        "summary": "Elder has cough for 1 week, no fever."
+      },
+      "flagged": [],
+      "expected": [],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 35514
+        },
+        {
+          "stage": "danger",
+          "ms": 5624
+        }
+      ]
+    },
+    {
+      "id": "v16",
+      "transcript": "Kaya namba 1618. Mtoto wa miaka miwili anaharisha na kuna damu kwenye choo tangu jana.",
+      "form": {
+        "householdId": "1618",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 24,
+            "symptoms": [
+              "diarrhoea",
+              "blood in stool"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "since yesterday",
+        "summary": "Two-year-old child has diarrhoea with blood in stool since yesterday."
+      },
+      "flagged": [
+        "diarrhoea_blood"
+      ],
+      "expected": [
+        "diarrhoea_blood"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 48856
+        },
+        {
+          "stage": "danger",
+          "ms": 14712
         }
       ]
     }
