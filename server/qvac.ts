@@ -16,6 +16,7 @@ import { DANGER_SIGNS, EVIDENCE_THRESHOLD } from './protocol.ts'
 import { VISIT_SCHEMA, type DangerResult, type VisitForm } from './types.ts'
 import { pcmToWav } from './audio.ts'
 import { swahiliNumeralsToDigits } from './swnum.ts'
+import { sentenceOf, statedDays } from './duration.ts'
 
 type Src = { readonly src: string }
 
@@ -244,7 +245,8 @@ ${GLOSSARY}`,
   return signs.map((s) => {
     const hit = found.filter((f) => f.id === s.id).map((f) => ({ ...f, support: evidenceSupport(f.evidence, note) })).sort((a, b) => b.support - a.support)[0]
     const support = hit?.support ?? 0
-    return { id: s.id, label: s.label, labelSw: s.labelSw, evidence: hit?.evidence ?? '', support, flagged: !!hit && support >= EVIDENCE_THRESHOLD }
+    const longEnough = !s.minDays || (!!hit && (statedDays(sentenceOf(hit.evidence, note)) ?? 0) >= s.minDays)
+    return { id: s.id, label: s.label, labelSw: s.labelSw, evidence: hit?.evidence ?? '', support, flagged: !!hit && support >= EVIDENCE_THRESHOLD && longEnough }
   })
 }
 

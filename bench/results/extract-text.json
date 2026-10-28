@@ -1,0 +1,519 @@
+{
+  "summary": {
+    "mode": "text",
+    "models": {
+      "stt": "whisper-large-v3-turbo",
+      "llm": "Gemma 4 4B Q4_K_M",
+      "tts": "Chatterbox multilingual T3 + S3Gen Q4_0"
+    },
+    "loadMs": {
+      "stt": null,
+      "llm": 29609,
+      "tts": null
+    },
+    "cases": 12,
+    "fieldAccuracy": {
+      "householdId": 1,
+      "pregnant": 1,
+      "gestationMonths": 1,
+      "vaccinesUpToDate": 1
+    },
+    "dangerSigns": {
+      "precision": 0.7857142857142857,
+      "recall": 1,
+      "truePositives": 11,
+      "falsePositives": 3,
+      "falseNegatives": 0
+    },
+    "referralDecisionAccuracy": 1,
+    "meanStageMs": {
+      "extract": 93537,
+      "danger": 31196
+    },
+    "peakRssMb": 141
+  },
+  "rows": [
+    {
+      "id": "v01",
+      "transcript": "Nimetembelea kaya namba 0142. Mtoto wa miezi nane ana homa kali tangu jana na hawezi kunyonya. Mama ni mjamzito wa miezi saba. Chanjo za mtoto zimekamilika.",
+      "form": {
+        "householdId": "0142",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 8,
+            "symptoms": [
+              "fever",
+              "cannot breastfeed"
+            ]
+          },
+          {
+            "role": "mother",
+            "ageMonths": null,
+            "symptoms": []
+          }
+        ],
+        "pregnant": true,
+        "gestationMonths": 7,
+        "vaccinesUpToDate": true,
+        "referralGiven": false,
+        "followUp": "Follow up as needed.",
+        "summary": "Household visit for child with fever and inability to breastfeed. Mother is 7 months pregnant. Child's vaccines are up to date."
+      },
+      "flagged": [
+        "cannot_feed",
+        "fever_long"
+      ],
+      "expected": [
+        "cannot_feed"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 102068
+        },
+        {
+          "stage": "danger",
+          "ms": 54466
+        }
+      ]
+    },
+    {
+      "id": "v02",
+      "transcript": "Kaya namba 0201. Mtoto wa miaka mitatu ana kikohozi kidogo kwa siku mbili. Anakula vizuri na hana homa. Nimempa mama ushauri wa kumpa maji mengi.",
+      "form": {
+        "householdId": "0201",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 36,
+            "symptoms": [
+              "mild cough"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "Advised mother to give plenty of water.",
+        "summary": "Three-year-old child has a mild cough for 2 days. Eats well and has no fever."
+      },
+      "flagged": [],
+      "expected": [],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 64461
+        },
+        {
+          "stage": "danger",
+          "ms": 10300
+        }
+      ]
+    },
+    {
+      "id": "v03",
+      "transcript": "Kaya namba 0310. Mama ni mjamzito wa miezi sita na anatokwa na damu ukeni tangu asubuhi. Nimempa rufaa kwenda kituo cha afya.",
+      "form": {
+        "householdId": "0310",
+        "members": [
+          {
+            "role": "mother",
+            "ageMonths": null,
+            "symptoms": [
+              "bleeding from vagina since morning"
+            ]
+          }
+        ],
+        "pregnant": true,
+        "gestationMonths": 6,
+        "vaccinesUpToDate": null,
+        "referralGiven": true,
+        "followUp": "Referred to health center.",
+        "summary": "Mother is 6 months pregnant and experiencing vaginal bleeding since the morning. A referral was given to the health center."
+      },
+      "flagged": [
+        "vaginal_bleeding"
+      ],
+      "expected": [
+        "vaginal_bleeding"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 50545
+        },
+        {
+          "stage": "danger",
+          "ms": 17564
+        }
+      ]
+    },
+    {
+      "id": "v04",
+      "transcript": "Kaya namba 0415. Mtoto wa miaka miwili alipata degedege jana usiku na leo amelegea sana. Hajapata chanjo ya surua.",
+      "form": {
+        "householdId": "0415",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 24,
+            "symptoms": [
+              "convulsions",
+              "lethargic"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": false,
+        "referralGiven": false,
+        "followUp": "Child had convulsions last night and is very lethargic today.",
+        "summary": "Child of two years experienced convulsions last night and is very lethargic today. Has not received measles vaccine."
+      },
+      "flagged": [
+        "convulsions",
+        "lethargic"
+      ],
+      "expected": [
+        "convulsions",
+        "lethargic"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 40184
+        },
+        {
+          "stage": "danger",
+          "ms": 112673
+        }
+      ]
+    },
+    {
+      "id": "v05",
+      "transcript": "Kaya namba 0522. Mama mjamzito wa miezi minane analalamika maumivu makali ya kichwa na anaona ukungu. Miguu yake imevimba.",
+      "form": {
+        "householdId": "0522",
+        "members": [
+          {
+            "role": "mother",
+            "ageMonths": null,
+            "symptoms": [
+              "severe headache",
+              "blurred vision",
+              "swollen legs"
+            ]
+          }
+        ],
+        "pregnant": true,
+        "gestationMonths": 8,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "Not mentioned",
+        "summary": "Mother in household 0522 is pregnant at 8 months and complains of severe headache, blurred vision, and swollen legs."
+      },
+      "flagged": [
+        "severe_headache"
+      ],
+      "expected": [
+        "severe_headache"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 298616
+        },
+        {
+          "stage": "danger",
+          "ms": 37304
+        }
+      ]
+    },
+    {
+      "id": "v06",
+      "transcript": "Kaya namba 0630. Mtoto wa miezi kumi na nane anaharisha kwa siku tatu bila damu. Bado anakunywa na kula. Nimempa ORS na zinki.",
+      "form": {
+        "householdId": "0630",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 18,
+            "symptoms": [
+              "diarrhoea"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "Given ORS and zinc.",
+        "summary": "18-month-old child has diarrhoea for 3 days without blood. Still drinking and eating."
+      },
+      "flagged": [],
+      "expected": [],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 178519
+        },
+        {
+          "stage": "danger",
+          "ms": 26941
+        }
+      ]
+    },
+    {
+      "id": "v07",
+      "transcript": "Kaya namba 0718. Mtoto wa miaka minne anatapika kila kitu anachokula tangu jana na ana homa.",
+      "form": {
+        "householdId": "0718",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 48,
+            "symptoms": [
+              "vomiting",
+              "fever"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "Follow up as needed",
+        "summary": "A four-year-old child is vomiting everything they eat since yesterday and has a fever."
+      },
+      "flagged": [
+        "vomits_everything",
+        "fever_long"
+      ],
+      "expected": [
+        "vomits_everything"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 185258
+        },
+        {
+          "stage": "danger",
+          "ms": 17024
+        }
+      ]
+    },
+    {
+      "id": "v08",
+      "transcript": "Kaya namba 0804. Mtoto mchanga wa wiki moja hanyonyi vizuri na viganja vyake ni vya njano. Mama alijifungua nyumbani.",
+      "form": {
+        "householdId": "0804",
+        "members": [
+          {
+            "role": "newborn",
+            "ageMonths": 1,
+            "symptoms": [
+              "poor breastfeeding",
+              "yellow palms"
+            ]
+          },
+          {
+            "role": "mother",
+            "ageMonths": null,
+            "symptoms": []
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "Mother delivered at home.",
+        "summary": "Newborn of 1 week is not breastfeeding well and has yellow palms. Mother delivered at home."
+      },
+      "flagged": [
+        "newborn_not_feeding",
+        "newborn_yellow"
+      ],
+      "expected": [
+        "newborn_not_feeding",
+        "newborn_yellow"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 36715
+        },
+        {
+          "stage": "danger",
+          "ms": 29948
+        }
+      ]
+    },
+    {
+      "id": "v09",
+      "transcript": "Kaya namba 0911. Mama ni mjamzito wa miezi mitano. Anajisikia vizuri na amehudhuria kliniki mara tatu. Mtoto wake wa miaka mitano ana afya njema na chanjo zimekamilika.",
+      "form": {
+        "householdId": "0911",
+        "members": [
+          {
+            "role": "mother",
+            "ageMonths": null,
+            "symptoms": [
+              "pregnant"
+            ]
+          },
+          {
+            "role": "child",
+            "ageMonths": 60,
+            "symptoms": []
+          }
+        ],
+        "pregnant": true,
+        "gestationMonths": 5,
+        "vaccinesUpToDate": true,
+        "referralGiven": false,
+        "followUp": "Attended clinic three times.",
+        "summary": "The mother is pregnant and feeling well. Her five-year-old child is in good health and has complete vaccinations."
+      },
+      "flagged": [],
+      "expected": [],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 40458
+        },
+        {
+          "stage": "danger",
+          "ms": 11612
+        }
+      ]
+    },
+    {
+      "id": "v10",
+      "transcript": "Kaya namba 1023. Babu ana kikohozi kwa wiki tatu na anapungua uzito. Nimempa rufaa kupimwa kifua kikuu.",
+      "form": {
+        "householdId": "1023",
+        "members": [
+          {
+            "role": "elder",
+            "ageMonths": null,
+            "symptoms": [
+              "cough for 3 weeks",
+              "weight loss"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": true,
+        "followUp": "To be seen for tuberculosis testing",
+        "summary": "Elder in the household has been coughing for 3 weeks and is losing weight. Referred for tuberculosis testing."
+      },
+      "flagged": [
+        "cough_two_weeks"
+      ],
+      "expected": [
+        "cough_two_weeks"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 37793
+        },
+        {
+          "stage": "danger",
+          "ms": 17050
+        }
+      ]
+    },
+    {
+      "id": "v11",
+      "transcript": "Kaya namba 1107. Mtoto wa miezi tisa anapumua kwa haraka na kifua kinavutika ndani. Ana homa tangu juzi.",
+      "form": {
+        "householdId": "1107",
+        "members": [
+          {
+            "role": "child",
+            "ageMonths": 9,
+            "symptoms": [
+              "rapid breathing",
+              "chest indrawing",
+              "fever"
+            ]
+          }
+        ],
+        "pregnant": false,
+        "gestationMonths": null,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "Follow up as needed",
+        "summary": "9-month-old child presenting with rapid breathing, chest indrawing, and fever since two days ago."
+      },
+      "flagged": [
+        "chest_indrawing",
+        "fever_long"
+      ],
+      "expected": [
+        "chest_indrawing"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 37046
+        },
+        {
+          "stage": "danger",
+          "ms": 22871
+        }
+      ]
+    },
+    {
+      "id": "v12",
+      "transcript": "Kaya namba 1235. Mama mjamzito wa miezi tisa anasema mtoto tumboni hachezi tangu jana.",
+      "form": {
+        "householdId": "1235",
+        "members": [
+          {
+            "role": "mother",
+            "ageMonths": null,
+            "symptoms": [
+              "pregnant"
+            ]
+          },
+          {
+            "role": "other",
+            "ageMonths": null,
+            "symptoms": [
+              "not moving"
+            ]
+          }
+        ],
+        "pregnant": true,
+        "gestationMonths": 9,
+        "vaccinesUpToDate": null,
+        "referralGiven": false,
+        "followUp": "The child in the womb has not been moving since yesterday.",
+        "summary": "Mother is pregnant (9 months) and reports that the baby in the womb has not been moving since yesterday."
+      },
+      "flagged": [
+        "reduced_movement"
+      ],
+      "expected": [
+        "reduced_movement"
+      ],
+      "timings": [
+        {
+          "stage": "extract",
+          "ms": 50786
+        },
+        {
+          "stage": "danger",
+          "ms": 16598
+        }
+      ]
+    }
+  ]
+}
