@@ -8,7 +8,10 @@ import { hostname, totalmem, freemem, cpus, platform, release } from 'node:os'
 import { join, resolve } from 'node:path'
 import { Ledger, type Role } from './ledger.ts'
 import { processVisit, type Stage } from './pipeline.ts'
-import { modelStates, readbackText, shutdown, speak, warm, normaliseForm } from './qvac.ts'
+import { streamSSE } from 'hono/streaming'
+import { liveTranscribe, memoryMode, modelStates, prefetch, readbackText, shutdown, speak, warm, normaliseForm, type LiveEvent } from './qvac.ts'
+import { pcmToWav } from './audio.ts'
+import { fitCheck, qvacMemory } from './device.ts'
 import { DANGER_SIGNS } from './protocol.ts'
 import type { Visit } from './types.ts'
 
@@ -53,32 +56,29 @@ app.get('/api/status', async (c) =>
     device: settings.device,
     role: settings.role,
     models: modelStates(),
-    system: { platform: platform(), release: release(), cpus: cpus().length, cpuModel: cpus()[0]?.model, totalMem: totalmem(), freeMem: freemem(), rss: process.memoryUsage().rss },
+    memoryMode,
+    fit: await fitCheck(),
+    system: { platform: platform(), release: release(), cpus: cpus().length, cpuModel: cpus()[0]?.model, totalMem: totalmem(), freeMem: freemem(), rss: process.memoryUsage().rss, qvacRss: qvacMemory() },
     dangerSigns: DANGER_SIGNS,
   }),
 )
 
 app.post('/api/models/warm', (c) => {
-  warm(['stt', 'llm', 'tts'])
-  return c.json({ ok: true })
+  if (memoryMode === 'full') warm()
+  else prefetch().catch((e: Error) => console.error('model download failed:', e.message))
+  return c.json({ ok: true, memoryMode })
 })
 
-app.post('/api/visits/process', async (c) => {
-  const body = await c.req.parseBody()
-  const language = body.language === 'en' ? 'en' : 'sw'
-  const file = body.audio instanceof File ? body.audio : null
-  const transcript = typeof body.transcript === 'string' ? body.transcript : undefined
-  if (!file && !transcript?.trim()) return c.json({ error: 'Record or upload audio first' }, 400)
-  const audio = file ? Buffer.from(await file.arrayBuffer()) : undefined
-  const job: Job = { id: randomUUID(), stage: 'queued', stages: [], transcript: null, visit: null, error: null }
+function startJob(input: { audio?: Buffer; transcript?: string; language: 'sw' | 'en' }, keep?: { audio: Buffer; ext: string }) {
+  const job: Job = { id: randomUUID(), stage: 'queued', stages: [], transcript: input.transcript ?? null, visit: null, error: null }
   jobs.set(job.id, job)
-  processVisit({ audio, transcript, language, device: settings.device }, (stage, status, detail) => {
+  processVisit({ ...input, device: settings.device }, (stage, status, detail) => {
     job.stage = stage
     job.stages.push({ stage, status, at: Date.now() })
     if (stage === 'transcribe' && status === 'done') job.transcript = String(detail)
   })
     .then(async (visit) => {
-      if (audio) await writeFile(join(DATA, 'audio', `${visit.id}.input`), audio)
+      if (keep) await writeFile(join(DATA, 'audio', `${visit.id}.${keep.ext}`), keep.audio)
       job.visit = visit
       job.transcript = visit.transcript
       job.stage = 'done'
@@ -87,7 +87,94 @@ app.post('/api/visits/process', async (c) => {
       job.error = e.message
       job.stage = 'error'
     })
+  return job
+}
+
+app.post('/api/visits/process', async (c) => {
+  const body = await c.req.parseBody()
+  const language = body.language === 'en' ? 'en' : 'sw'
+  const file = body.audio instanceof File ? body.audio : null
+  const transcript = typeof body.transcript === 'string' ? body.transcript : undefined
+  if (!file && !transcript?.trim()) return c.json({ error: 'Record or upload audio first' }, 400)
+  const audio = file ? Buffer.from(await file.arrayBuffer()) : undefined
+  const job = startJob({ audio, transcript, language }, audio && { audio, ext: 'input' })
   return c.json({ jobId: job.id })
+})
+
+// Live visit: the browser streams 16 kHz mono float32 PCM while the promoter
+// speaks; phrases come back over server-sent events as soon as they pause.
+interface Live {
+  language: 'sw' | 'en'
+  events: LiveEvent[]
+  listeners: Set<(e: LiveEvent) => void>
+  pcm: Buffer[]
+  stream: ReturnType<typeof liveTranscribe>
+  error: string | null
+}
+const lives = new Map<string, Live>()
+
+app.post('/api/live', async (c) => {
+  const { language: l } = (await c.req.json().catch(() => ({}))) as { language?: string }
+  const language = l === 'en' ? 'en' : 'sw'
+  for (const [id, old] of lives) {
+    old.stream.cancel()
+    lives.delete(id)
+  }
+  const id = randomUUID()
+  const live: Live = { language, events: [], listeners: new Set(), pcm: [], stream: null as never, error: null }
+  const emit = (e: LiveEvent) => {
+    if (e.type !== 'vad') live.events.push(e)
+    for (const f of live.listeners) f(e)
+  }
+  live.stream = liveTranscribe(language, emit)
+  lives.set(id, live)
+  return c.json({ id })
+})
+
+app.post('/api/live/:id/audio', async (c) => {
+  const live = lives.get(c.req.param('id'))
+  if (!live) return c.json({ error: 'Unknown live session' }, 404)
+  const buf = Buffer.from(await c.req.arrayBuffer())
+  live.pcm.push(buf)
+  live.stream.write(new Uint8Array(buf))
+  return c.json({ ok: true })
+})
+
+app.get('/api/live/:id/events', (c) => {
+  const live = lives.get(c.req.param('id'))
+  if (!live) return c.json({ error: 'Unknown live session' }, 404)
+  return streamSSE(c, async (s) => {
+    let closed = false
+    const send = (e: LiveEvent) => s.writeSSE({ data: JSON.stringify(e) }).catch(() => {})
+    for (const e of live.events) await send(e)
+    live.listeners.add(send)
+    s.onAbort(() => {
+      closed = true
+      live.listeners.delete(send)
+    })
+    while (!closed && lives.has(c.req.param('id'))) await s.sleep(1000)
+    live.listeners.delete(send)
+  })
+})
+
+app.post('/api/live/:id/stop', async (c) => {
+  const id = c.req.param('id')
+  const live = lives.get(id)
+  if (!live) return c.json({ error: 'Unknown live session' }, 404)
+  try {
+    await live.stream.end()
+  } catch (e) {
+    lives.delete(id)
+    return c.json({ error: (e as Error).message }, 500)
+  }
+  const preview = live.events.flatMap((e) => (e.type === 'text' ? [e.text] : [])).join(' ').replace(/\s+/g, ' ').trim()
+  const all = Buffer.concat(live.pcm)
+  const samples = new Float32Array(all.buffer, all.byteOffset, Math.floor(all.length / 4))
+  lives.delete(id)
+  if (!samples.length) return c.json({ error: 'No audio was received from the microphone.' }, 400)
+  const wav = pcmToWav(samples.map((x) => x * 32767), 16000)
+  const job = startJob({ audio: wav, language: live.language }, { audio: wav, ext: 'wav' })
+  return c.json({ jobId: job.id, preview })
 })
 
 app.get('/api/jobs/:id', (c) => {
@@ -168,7 +255,10 @@ app.get('*', async (c) => {
   return c.html(await readFile(index, 'utf8'))
 })
 
-if (process.env.RIPOTI_WARM !== '0') warm(['stt', 'llm'])
+if (process.env.RIPOTI_WARM !== '0') {
+  if (memoryMode === 'full') warm(['stt', 'llm'])
+  else prefetch().catch((e: Error) => console.error('model download failed:', e.message))
+}
 
 const server = serve({ fetch: app.fetch, port: PORT, hostname: '0.0.0.0' }, () => {
   console.log(`Ripoti on http://localhost:${PORT}  (data: ${DATA}, role: ${settings.role})`)

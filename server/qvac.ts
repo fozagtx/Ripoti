@@ -2,6 +2,8 @@ import {
   loadModel,
   unloadModel,
   transcribe,
+  transcribeStream,
+  downloadAsset,
   completion,
   textToSpeech,
   close,
@@ -9,9 +11,12 @@ import {
   WHISPER_LARGE_V3_TURBO,
   QWEN3_4B_INST_Q4_K_M,
   GEMMA4_4B_MULTIMODAL_Q4_K_M,
+  GEMMA4_2B_MULTIMODAL_Q4_K_M,
   TTS_T3_MULTILINGUAL_CHATTERBOX_Q4_0,
   TTS_S3GEN_MULTILINGUAL_CHATTERBOX_Q4_0,
+  VAD_SILERO_5_1_2,
 } from '@qvac/sdk'
+import { totalmem } from 'node:os'
 import { DANGER_SIGNS, EVIDENCE_THRESHOLD } from './protocol.ts'
 import { VISIT_SCHEMA, type DangerResult, type VisitForm } from './types.ts'
 import { pcmToWav } from './audio.ts'
@@ -29,6 +34,11 @@ export interface ModelChoice {
   src: Src
 }
 
+export const DEFAULT_LLM = 'gemma4b'
+// Live captions use whisper-small so text keeps up with speech on a laptop
+// CPU; the saved transcript is re-done with large-v3-turbo when you stop.
+export const LIVE_SEGMENT_S = 6
+
 export const STT_MODELS: Record<string, ModelChoice> = {
   turbo: { key: 'turbo', name: 'whisper-large-v3-turbo', src: WHISPER_LARGE_V3_TURBO },
   small: { key: 'small', name: 'whisper-small q8_0', src: WHISPER_SMALL_Q8_0 },
@@ -36,6 +46,7 @@ export const STT_MODELS: Record<string, ModelChoice> = {
 
 export const LLM_MODELS: Record<string, ModelChoice> = {
   gemma4b: { key: 'gemma4b', name: 'Gemma 4 4B Q4_K_M', src: GEMMA4_4B_MULTIMODAL_Q4_K_M },
+  gemma2b: { key: 'gemma2b', name: 'Gemma 4 2B Q4_K_M', src: GEMMA4_2B_MULTIMODAL_Q4_K_M },
   qwen4b: { key: 'qwen4b', name: 'Qwen3-4B-Instruct Q4_K_M', src: QWEN3_4B_INST_Q4_K_M },
 }
 
@@ -46,11 +57,20 @@ export type ModelState = { role: Role; name: string; status: 'idle' | 'loading' 
 
 const state: Record<Role, ModelState> = {
   stt: { role: 'stt', name: STT_MODELS[process.env.RIPOTI_STT ?? 'turbo']?.name ?? STT_MODELS.turbo.name, status: 'idle', progress: 0, error: null, loadMs: null },
-  llm: { role: 'llm', name: LLM_MODELS[process.env.RIPOTI_LLM ?? 'gemma4b']?.name ?? LLM_MODELS.gemma4b.name, status: 'idle', progress: 0, error: null, loadMs: null },
+  llm: { role: 'llm', name: LLM_MODELS[process.env.RIPOTI_LLM ?? DEFAULT_LLM]?.name ?? LLM_MODELS[DEFAULT_LLM].name, status: 'idle', progress: 0, error: null, loadMs: null },
   tts: { role: 'tts', name: TTS_MODEL.name, status: 'idle', progress: 0, error: null, loadMs: null },
 }
-const ids: Partial<Record<Role, string>> = {}
-const loading: Partial<Record<Role, Promise<string>>> = {}
+export type MemoryMode = 'lean' | 'full'
+// Lean keeps one QVAC model in memory at a time, so peak RAM is the largest
+// single model rather than all three together. It is the default below 24 GB.
+export const memoryMode: MemoryMode =
+  process.env.RIPOTI_MEMORY === 'full' || process.env.RIPOTI_MEMORY === 'lean'
+    ? process.env.RIPOTI_MEMORY
+    : totalmem() < 24 * 1024 ** 3
+      ? 'lean'
+      : 'full'
+
+const loaded: Partial<Record<Role, { key: string; id: string }>> = {}
 
 export function modelStates() {
   return Object.values(state)
@@ -59,12 +79,15 @@ export function modelStates() {
 function sttChoice() {
   return STT_MODELS[process.env.RIPOTI_STT ?? 'turbo'] ?? STT_MODELS.turbo
 }
+function liveSttChoice() {
+  return STT_MODELS[process.env.RIPOTI_LIVE_STT ?? 'small'] ?? STT_MODELS.small
+}
 function llmChoice() {
-  return LLM_MODELS[process.env.RIPOTI_LLM ?? 'gemma4b'] ?? LLM_MODELS.gemma4b
+  return LLM_MODELS[process.env.RIPOTI_LLM ?? DEFAULT_LLM] ?? LLM_MODELS[DEFAULT_LLM]
 }
 
-// QVAC runs one worker process; loads are serialised so two model
-// downloads/initialisations never race inside it.
+// QVAC runs one worker process. Every load, unload and inference goes
+// through this queue, so models never race or overlap in memory.
 let queue: Promise<unknown> = Promise.resolve()
 function serial<T>(fn: () => Promise<T>): Promise<T> {
   const next = queue.then(fn, fn)
@@ -72,66 +95,150 @@ function serial<T>(fn: () => Promise<T>): Promise<T> {
   return next
 }
 
-function ensure(role: Role): Promise<string> {
-  if (ids[role]) return Promise.resolve(ids[role]!)
-  if (loading[role]) return loading[role]!
+async function release(role: Role) {
+  const cur = loaded[role]
+  if (!cur) return
+  delete loaded[role]
+  state[role].status = 'idle'
+  state[role].progress = 0
+  await unloadModel({ modelId: cur.id }).catch(() => {})
+}
+
+type Loader = (onProgress: (p: { percentage: number }) => void) => Promise<string>
+
+async function acquire(role: Role, key: string, load: Loader): Promise<string> {
+  const cur = loaded[role]
+  if (cur?.key === key) return cur.id
+  await release(role)
+  if (memoryMode === 'lean') for (const r of Object.keys(loaded) as Role[]) await release(r)
   const s = state[role]
-  const onProgress = (p: { percentage: number }) => {
-    s.progress = Math.round(p.percentage)
-  }
-  const p = serial(async () => {
-    s.status = 'loading'
-    s.error = null
-    const t0 = performance.now()
-    let id: string
-    if (role === 'stt') {
-      id = await loadModel({
-        modelSrc: sttChoice().src,
-        modelConfig: { language: sttLanguage, translate: false, no_timestamps: true, strategy: 'greedy', suppress_nst: true },
-        onProgress,
-      } as never)
-    } else if (role === 'llm') {
-      id = await loadModel({ modelSrc: llmChoice().src, modelConfig: { ctx_size: 4096 }, onProgress } as never)
-    } else {
-      id = await loadModel({
-        modelSrc: TTS_MODEL.src,
-        modelConfig: { ttsEngine: 'chatterbox', language: 'sw', s3genModelSrc: TTS_S3GEN_MULTILINGUAL_CHATTERBOX_Q4_0, cfmSteps: 1, threads: 8 },
-        onProgress,
-      } as never)
-    }
+  s.status = 'loading'
+  s.error = null
+  s.progress = 0
+  const t0 = performance.now()
+  try {
+    const id = await load((p) => (s.progress = Math.round(p.percentage)))
     s.loadMs = Math.round(performance.now() - t0)
     s.status = 'ready'
     s.progress = 100
-    ids[role] = id
+    loaded[role] = { key, id }
     return id
-  })
-  loading[role] = p
-  p.catch((e: Error) => {
+  } catch (e) {
     s.status = 'error'
-    s.error = e.message
-  }).finally(() => delete loading[role])
-  return p
-}
-
-export function warm(roles: Role[]) {
-  for (const r of roles) ensure(r).catch(() => {})
-}
-
-let sttLanguage: 'sw' | 'en' = 'sw'
-
-// Whisper's language is fixed at load time, so switching language reloads it.
-export async function stt(wav: Buffer, language: 'sw' | 'en'): Promise<string> {
-  if (language !== sttLanguage) {
-    await loading.stt?.catch(() => {})
-    const old = ids.stt
-    delete ids.stt
-    sttLanguage = language
-    state.stt.status = 'idle'
-    if (old) await serial(() => unloadModel({ modelId: old }).catch(() => {}))
+    s.error = (e as Error).message
+    throw e
   }
-  const id = await ensure('stt')
-  const out = await serial(() => transcribe({ modelId: id, audioChunk: wav } as never))
+}
+
+const WHISPER_BASE = { translate: false, no_timestamps: true, strategy: 'greedy', suppress_nst: true }
+
+function sttSpec(language: 'sw' | 'en', live: boolean): [string, Loader] {
+  const choice = live ? liveSttChoice() : sttChoice()
+  state.stt.name = choice.name
+  const modelConfig = live
+    ? {
+        ...WHISPER_BASE,
+        language,
+        audio_format: 'f32le',
+        suppress_blank: true,
+        temperature: 0,
+        vadModelSrc: VAD_SILERO_5_1_2,
+        vad_params: { threshold: 0.5, min_speech_duration_ms: 250, min_silence_duration_ms: 400, max_speech_duration_s: LIVE_SEGMENT_S, speech_pad_ms: 150 },
+      }
+    : { ...WHISPER_BASE, language }
+  return [`${choice.key}:${language}:${live ? 'live' : 'file'}`, (onProgress) => loadModel({ modelSrc: choice.src, modelConfig, onProgress } as never)]
+}
+
+const llmSpec = (): [string, Loader] => {
+  const c = llmChoice()
+  return [c.key, (onProgress) => loadModel({ modelSrc: c.src, modelConfig: { ctx_size: 4096 }, onProgress } as never)]
+}
+
+const ttsSpec = (): [string, Loader] => [
+  'chatterbox:sw',
+  (onProgress) =>
+    loadModel({
+      modelSrc: TTS_MODEL.src,
+      modelConfig: { ttsEngine: 'chatterbox', language: 'sw', s3genModelSrc: TTS_S3GEN_MULTILINGUAL_CHATTERBOX_Q4_0, cfmSteps: 1, threads: 8 },
+      onProgress,
+    } as never),
+]
+
+function withModel<T>(role: Role, [key, load]: [string, Loader], fn: (id: string) => Promise<T>): Promise<T> {
+  return serial(async () => fn(await acquire(role, key, load)))
+}
+
+// Downloads every model to the local cache without loading it, so the
+// first visit works with the network off.
+export async function prefetch() {
+  const srcs = [sttChoice().src, liveSttChoice().src, VAD_SILERO_5_1_2, llmChoice().src, TTS_MODEL.src, TTS_S3GEN_MULTILINGUAL_CHATTERBOX_Q4_0]
+  for (const s of new Set(srcs)) await downloadAsset({ assetSrc: s } as never)
+}
+
+// In full mode the models stay loaded, so warming them up front saves time.
+export function warm(roles: Role[] = ['stt', 'llm', 'tts']) {
+  for (const r of roles) {
+    const spec = r === 'stt' ? sttSpec('sw', false) : r === 'llm' ? llmSpec() : ttsSpec()
+    withModel(r, spec, async (id) => id).catch(() => {})
+  }
+}
+
+export async function stt(wav: Buffer, language: 'sw' | 'en'): Promise<string> {
+  const out = await withModel('stt', sttSpec(language, false), (id) => transcribe({ modelId: id, audioChunk: wav } as never) as Promise<unknown>)
   return String(out).replace(/\s+/g, ' ').trim()
+}
+
+export type LiveEvent = { type: 'ready' } | { type: 'text'; text: string } | { type: 'vad'; speaking: boolean } | { type: 'endOfTurn' }
+
+// Live transcription: Silero VAD cuts the microphone stream into phrases and
+// Whisper transcribes each phrase as soon as the speaker pauses.
+export function liveTranscribe(language: 'sw' | 'en', onEvent: (e: LiveEvent) => void) {
+  const pending: Uint8Array[] = []
+  let session: { write(b: Uint8Array): void; end(): void; destroy(): void } | null = null
+  let ended = false
+  let lastEvent = Date.now()
+  const done = withModel('stt', sttSpec(language, true), async (id) => {
+    const s = (await transcribeStream({ modelId: id, emitVadEvents: true, endOfTurnSilenceMs: 700 } as never)) as unknown as {
+      write(b: Uint8Array): void
+      end(): void
+      destroy(): void
+      [Symbol.asyncIterator](): AsyncIterator<{ type: string; text?: string; speaking?: boolean }>
+    }
+    session = s
+    for (const b of pending.splice(0)) s.write(b)
+    if (ended) s.end()
+    onEvent({ type: 'ready' })
+    for await (const e of s) {
+      if (e.type !== 'vad') lastEvent = Date.now()
+      if (e.type === 'text' && e.text?.trim()) onEvent({ type: 'text', text: e.text.trim() })
+      else if (e.type === 'vad') onEvent({ type: 'vad', speaking: !!e.speaking })
+      else if (e.type === 'endOfTurn') onEvent({ type: 'endOfTurn' })
+    }
+  })
+  return {
+    write(b: Uint8Array) {
+      if (ended) return
+      if (session) session.write(b)
+      else pending.push(b)
+    },
+    // Pads with silence and waits for Whisper to finish the phrase in
+    // flight, since ending the session drops any unfinished segment.
+    async end() {
+      if (ended) return done
+      ended = true
+      if (session) {
+        session.write(new Uint8Array(new Float32Array(16000 * 1.5).buffer))
+        const t0 = Date.now()
+        while (Date.now() - t0 < 15000 && (Date.now() - t0 < 2000 || Date.now() - lastEvent < 2500)) await new Promise((r) => setTimeout(r, 250))
+        session.end()
+      }
+      return done
+    },
+    cancel() {
+      ended = true
+      session?.destroy()
+    },
+  }
 }
 
 const GLOSSARY = `Swahili glossary: miezi = months, miaka = years, siku = days, wiki = weeks, kaya = household, mjamzito = pregnant, homa = fever, kikohozi = cough, kuhara = diarrhoea, kutapika = vomiting, degedege = convulsions, kunyonya = breastfeed, chanjo = vaccines, zimekamilika = complete, rufaa = referral, damu = blood, kichwa = head, tumbo = stomach. kuharisha = diarrhoea, kupumua = breathing, kifua = chest, ukungu = blurred vision, hachezi = not moving, viganja = palms, nyayo = soles, njano = yellow, amelegea = lethargic/very weak, kifua kikuu = tuberculosis, babu = grandfather, bibi = grandmother, mchanga = newborn.`
@@ -151,8 +258,7 @@ ${GLOSSARY}`
 
 
 export async function extract(transcript: string): Promise<VisitForm> {
-  const id = await ensure('llm')
-  const run = await serial(async () => {
+  const run = await withModel('llm', llmSpec(), async (id) => {
     const r = completion({
       modelId: id,
       stream: true,
@@ -210,7 +316,6 @@ export function evidenceSupport(evidence: string, note: string) {
 export async function dangerSigns(transcript: string, form: VisitForm): Promise<DangerResult[]> {
   const signs = relevantSigns(form)
   const note = swahiliNumeralsToDigits(transcript)
-  const id = await ensure('llm')
   const list = signs.map((s) => `- ${s.id}: ${s.instruction}`).join('\n')
   const schema = {
     type: 'object',
@@ -226,7 +331,7 @@ export async function dangerSigns(transcript: string, form: VisitForm): Promise<
     },
     required: ['found'],
   }
-  const final = await serial(() =>
+  const final = await withModel('llm', llmSpec(), (id) =>
     (completion({
       modelId: id,
       stream: true,
@@ -263,8 +368,7 @@ export function sentences(text: string) {
 }
 
 export async function speak(text: string): Promise<Buffer> {
-  const id = await ensure('tts')
-  return serial(async () => {
+  return withModel('tts', ttsSpec(), async (id) => {
     const all: number[] = []
     let rate = 24000
     for (const sentence of sentences(text)) {
@@ -281,11 +385,23 @@ export async function speak(text: string): Promise<Buffer> {
   })
 }
 
+// The loads Ripoti makes, in loadModel's own parameters, for QVAC's
+// assessModelFit check.
+export function fitCandidates() {
+  return [
+    { modelSrc: sttChoice().src, modelType: 'whispercpp-transcription', modelConfig: { language: 'sw' } },
+    { modelSrc: llmChoice().src, modelType: 'llamacpp-completion', modelConfig: { ctx_size: 4096 } },
+    { modelSrc: TTS_MODEL.src, modelType: 'tts-ggml', modelConfig: { ttsEngine: 'chatterbox', language: 'sw', s3genModelSrc: TTS_S3GEN_MULTILINGUAL_CHATTERBOX_Q4_0 } },
+  ]
+}
+
 export function modelNames() {
   return { stt: sttChoice().name, llm: llmChoice().name, tts: TTS_MODEL.name }
 }
 
 export async function shutdown() {
-  for (const id of Object.values(ids)) await unloadModel({ modelId: id! }).catch(() => {})
+  await serial(async () => {
+    for (const r of Object.keys(loaded) as Role[]) await release(r)
+  })
   await close().catch(() => {})
 }

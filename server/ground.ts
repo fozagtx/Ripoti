@@ -14,6 +14,7 @@ export function groundForm(form: VisitForm, note: string): VisitForm {
       ...m,
       ageMonths: m.ageMonths !== null && (stated(m.ageMonths) || (m.ageMonths % 12 === 0 && stated(m.ageMonths / 12))) ? m.ageMonths : null,
     })),
+    summary: [...numbersIn(form.summary)].every((n) => nums.has(n)) ? form.summary : '',
     gestationMonths: form.pregnant && form.gestationMonths !== null && form.gestationMonths >= 1 && form.gestationMonths <= 10 && stated(form.gestationMonths) ? form.gestationMonths : null,
   }
 }

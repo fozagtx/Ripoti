@@ -17,3 +17,10 @@ test('keeps ages stated in years', () => {
   const f = groundForm({ ...base, pregnant: false, gestationMonths: null, members: [{ role: 'child', ageMonths: 36, symptoms: [] }] }, 'Mtoto wa miaka mitatu ana kikohozi.')
   assert.equal(f.members[0].ageMonths, 36)
 })
+
+test('clears a summary that quotes numbers the note never states', () => {
+  const note = 'Mtoto wa miezi nane ana homa. Mama ni mjamzito miezi saba.'
+  const f = (summary: string) => groundForm({ ...base, summary, gestationMonths: null, members: [] }, note).summary
+  assert.equal(f('The mother is 30 months pregnant.'), '')
+  assert.equal(f('8-month-old child with fever; mother 7 months pregnant.'), '8-month-old child with fever; mother 7 months pregnant.')
+})

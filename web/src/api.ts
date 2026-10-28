@@ -10,9 +10,14 @@ export interface Visit {
   timings: { stage: string; ms: number }[]; models: Record<string, string>; source?: string
 }
 export interface ModelState { role: string; name: string; status: 'idle' | 'loading' | 'ready' | 'error'; progress: number; error: string | null; loadMs: number | null }
+export interface FitCheck {
+  memoryMode: 'lean' | 'full'; execution: 'sequential' | 'concurrent'; totalBytes: number | null; cores: number | null; cpu: string | null; gpus: number
+  verdict: 'likely-fits' | 'likely-too-large' | 'unknown' | 'error'; basis: string | null; budgetBytes: number | null
+  models: { name: string; verdict: string; evidence: string; floorBytes: number | null }[]; error: string | null
+}
 export interface Status {
-  device: string; role: 'promoter' | 'supervisor'; models: ModelState[]
-  system: { platform: string; release: string; cpus: number; cpuModel: string; totalMem: number; freeMem: number; rss: number }
+  device: string; role: 'promoter' | 'supervisor'; models: ModelState[]; memoryMode: 'lean' | 'full'; fit: FitCheck
+  system: { platform: string; release: string; cpus: number; cpuModel: string; totalMem: number; freeMem: number; rss: number; qvacRss: number | null }
   dangerSigns: { id: string; group: string; label: string; labelSw: string }[]
 }
 export interface Job { id: string; stage: string; stages: { stage: string; status: string; at: number }[]; transcript: string | null; visit: Visit | null; error: string | null }
@@ -41,6 +46,10 @@ export const api = {
   sync: () => req<SyncStatus>('/api/sync'),
   startSync: () => req<SyncStatus>('/api/sync/start', { method: 'POST' }),
   stopSync: () => req<SyncStatus>('/api/sync/stop', { method: 'POST' }),
+  liveStart: (language: 'sw' | 'en') => req<{ id: string }>('/api/live', json({ language })),
+  liveAudio: (id: string, pcm: Float32Array) =>
+    req(`/api/live/${id}/audio`, { method: 'POST', headers: { 'content-type': 'application/octet-stream' }, body: pcm.slice().buffer as ArrayBuffer }),
+  liveStop: (id: string) => req<{ jobId: string; preview: string }>(`/api/live/${id}/stop`, { method: 'POST' }),
   readback: async (text: string) => {
     const r = await fetch('/api/readback', json({ text }))
     if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error ?? 'Read-back failed')
