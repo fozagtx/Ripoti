@@ -1,6 +1,12 @@
 import { useState, type ReactNode } from 'react'
 import { CalendarDays, CheckCircle2, Languages, Loader2, Plus, Save, Siren, Smartphone, Trash2, Users, Volume2 } from 'lucide-react'
 import { api, fmtDate, fmtMs, type Member, type Visit } from '../api'
+import { readbackText } from '../../../server/readback.ts'
+
+function SymptomsInput({ value, disabled, onChange }: { value: string[]; disabled?: boolean; onChange: (v: string[]) => void }) {
+  const [text, setText] = useState(value.join(', '))
+  return <input className="input" disabled={disabled} placeholder="Symptoms, comma separated" value={text} onChange={(e) => { setText(e.target.value); onChange(e.target.value.split(',').map((s) => s.trim()).filter(Boolean)) }} />
+}
 
 export function VisitEditor({ initial, onSaved, readOnly, badges }: { initial: Visit; onSaved?: (v: Visit) => void; readOnly?: boolean; badges?: ReactNode }) {
   const [v, setV] = useState(initial)
@@ -12,6 +18,7 @@ export function VisitEditor({ initial, onSaved, readOnly, badges }: { initial: V
   const setForm = (patch: Partial<typeof f>) => setV({ ...v, form: { ...f, ...patch } })
   const setMember = (i: number, patch: Partial<Member>) => setForm({ members: f.members.map((m, j) => (j === i ? { ...m, ...patch } : m)) })
   const flagged = v.danger.filter((d) => d.flagged)
+  const spoken = readbackText(f, v.danger)
 
   async function save() {
     setSaving(true)
@@ -31,7 +38,7 @@ export function VisitEditor({ initial, onSaved, readOnly, badges }: { initial: V
     setSpeaking(true)
     setError(null)
     try {
-      setAudioUrl(await api.readback(v.readback))
+      setAudioUrl(await api.readback(spoken))
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -79,7 +86,7 @@ export function VisitEditor({ initial, onSaved, readOnly, badges }: { initial: V
                   {['mother', 'child', 'newborn', 'father', 'elder', 'other'].map((r) => <option key={r}>{r}</option>)}
                 </select>
                 <input className="input" disabled={readOnly} placeholder="Age (months)" value={m.ageMonths ?? ''} onChange={(e) => setMember(i, { ageMonths: e.target.value === '' ? null : Number(e.target.value) })} />
-                <input className="input" disabled={readOnly} placeholder="Symptoms, comma separated" value={m.symptoms.join(', ')} onChange={(e) => setMember(i, { symptoms: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} />
+                <SymptomsInput disabled={readOnly} value={m.symptoms} onChange={(symptoms) => setMember(i, { symptoms })} />
                 {!readOnly && <button className="btn icon-btn" onClick={() => setForm({ members: f.members.filter((_, j) => j !== i) })} aria-label="Remove person"><Trash2 size={15} /></button>}
               </div>
             ))}
@@ -117,7 +124,7 @@ export function VisitEditor({ initial, onSaved, readOnly, badges }: { initial: V
           <div className="card">
             <h2>Read-back</h2>
             <p className="sub">Spoken in Kiswahili on this device so the household hears the advice.</p>
-            <div className="transcript" style={{ marginBottom: 14 }}>{v.readback}</div>
+            <div className="transcript" style={{ marginBottom: 14 }}>{spoken}</div>
             <button className="btn outline" onClick={readBack} disabled={speaking}>{speaking ? <Loader2 size={16} className="spin" /> : <Volume2 size={16} />} {speaking ? 'Generating speech on this device…' : 'Play read-back'}</button>
             {audioUrl && <audio controls autoPlay src={audioUrl} style={{ width: '100%', marginTop: 12 }} />}
           </div>

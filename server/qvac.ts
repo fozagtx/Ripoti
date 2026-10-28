@@ -18,6 +18,8 @@ import { pcmToWav } from './audio.ts'
 import { swahiliNumeralsToDigits } from './swnum.ts'
 import { sentenceOf, statedDays } from './duration.ts'
 import { groundForm } from './ground.ts'
+import { readbackText } from './readback.ts'
+export { readbackText }
 
 type Src = { readonly src: string }
 
@@ -250,19 +252,6 @@ ${GLOSSARY}`,
     const longEnough = !s.minDays || (!!hit && (statedDays(sentenceOf(hit.evidence, note)) ?? 0) >= s.minDays)
     return { id: s.id, label: s.label, labelSw: s.labelSw, evidence: hit?.evidence ?? '', support, flagged: !!hit && support >= EVIDENCE_THRESHOLD && longEnough }
   })
-}
-
-export function readbackText(form: VisitForm, danger: DangerResult[]): string {
-  const flagged = danger.filter((d) => d.flagged)
-  const parts = [`Kaya ${form.householdId || 'bila namba'}.`]
-  if (flagged.length) {
-    parts.push(`Dalili za hatari: ${flagged.map((d) => d.labelSw).join(', ')}.`)
-    parts.push('Mpe rufaa kwenda kituo cha afya leo.')
-  } else {
-    parts.push('Hakuna dalili za hatari zilizotambuliwa.')
-  }
-  if (form.pregnant) parts.push(form.gestationMonths ? `Mama ni mjamzito wa miezi ${form.gestationMonths}.` : 'Mama ni mjamzito.')
-  return parts.join(' ')
 }
 
 // Chatterbox is run one sentence at a time so a long read-back cannot
