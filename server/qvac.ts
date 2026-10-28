@@ -139,6 +139,7 @@ Rules:
 - householdId: the household number spoken (e.g. "kaya namba 0142" -> "0142"); empty string if none.
 - members: one entry per person mentioned; role is one of mother, child, newborn, father, elder, other; ageMonths converts years to months, null if not said.
 - symptoms, followUp and summary are in English.
+- followUp is an empty string unless the note states a follow-up action or date.
 - pregnant is true only if the note says someone is pregnant; gestationMonths if stated.
 - vaccinesUpToDate is null when vaccines are not mentioned.
 - referralGiven is true only if the promoter says they referred someone.

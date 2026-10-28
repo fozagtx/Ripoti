@@ -84,6 +84,10 @@ Read these numbers with care:
 - The first run on cases v01–v12 had 3 false positives, all "fever for 7 days or more" flagged for a fever that started yesterday or the day before. We then added a rule: a sign defined by a duration needs that duration stated in the note (`server/duration.ts`). The 0 false positives come after that fix, measured on the same 12 cases plus 4 new ones (v13–v16). That is not a held-out test.
 - 16 cases is a small sample. Treat this as a smoke test, not a clinical validation.
 
+### Offline check
+
+The core AI was run with the network fully removed: `sudo unshare -n` gives the process a network namespace with no interfaces at all, not even loopback. Under that, with models already cached, Ripoti transcribed a FLEURS clip (Whisper), filled in the form and flagged `cannot_feed` for case v01 (Gemma 4), and spoke "Kaya namba 0142." (Chatterbox, 2.6 s of audio). No step tried to reach the network.
+
 ### Kiswahili read-back (Chatterbox, CPU)
 
 | Text | Synthesis time | Audio length |
