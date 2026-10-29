@@ -6,30 +6,7 @@ Built for AI Yako: Own Your AI (QVAC Hackathon), Cloud to Pocket track.
 
 ## Run it
 
-Needs Node 22.18 or newer (Node runs the TypeScript server directly) and `ffmpeg` on the PATH.
-
-```bash
-npm install
-npm run build        # builds the web UI into dist/web
-npm start            # http://localhost:4747
-```
-
-On first start Ripoti downloads the QVAC models (about 8 GB in total) into the QVAC cache. Open **Models & device** to watch progress. After that, turn the network off: recording, transcription, form filling, danger signs and read-back keep working.
-
-Optional environment overrides:
-
-| Variable | Values | Default |
-| --- | --- | --- |
-| `RIPOTI_STT` | `turbo` (whisper-large-v3-turbo), `small` (whisper-small q8) | `turbo` |
-| `RIPOTI_LLM` | `gemma4b` (Gemma 4 4B), `gemma2b` (Gemma 4 2B), `qwen4b` (Qwen3-4B) | `gemma4b` |
-| `RIPOTI_LIVE_STT` | Live-caption model: `small`, `turbo` | `small` |
-| `RIPOTI_MEMORY` | `lean` (one model in memory at a time) or `full` (keep models loaded) | `lean` under 24 GB RAM, else `full` |
-| `RIPOTI_WARM` | `0` to load models on first use instead of at start | `1` |
-| `PORT` | HTTP port | `4747` |
-
-## Run it offline (judges)
-
-1. Install Node 22.18 or newer and `ffmpeg`.
+1. Install Node 22.18 or newer (Node runs the TypeScript server directly) and `ffmpeg`.
 2. Install, build and start:
    ```bash
    git clone https://github.com/fozagtx/Ripoti && cd Ripoti
@@ -45,6 +22,17 @@ Optional environment overrides:
 8. Optional, team sync: put two laptops on the same hotspot. On one, open **Team sync**, choose *Supervisor*, enter a team code and tap **Start sync**. On the other, choose *Promoter*, enter the same code and the supervisor's address, and tap **Start sync**. The saved visit appears on the supervisor's laptop.
 
 No recording handy? Use **Upload audio** on the New visit page with any Kiswahili or English WAV/MP3/M4A file.
+
+Optional environment overrides:
+
+| Variable | Values | Default |
+| --- | --- | --- |
+| `RIPOTI_STT` | `turbo` (whisper-large-v3-turbo), `small` (whisper-small q8) | `turbo` |
+| `RIPOTI_LLM` | `gemma4b` (Gemma 4 4B), `gemma2b` (Gemma 4 2B), `qwen4b` (Qwen3-4B) | `gemma4b` |
+| `RIPOTI_LIVE_STT` | Live-caption model: `small`, `turbo` | `small` |
+| `RIPOTI_MEMORY` | `lean` (one model in memory at a time) or `full` (keep models loaded) | `lean` under 24 GB RAM, else `full` |
+| `RIPOTI_WARM` | `0` to load models on first use instead of at start | `1` |
+| `PORT` | HTTP port | `4747` |
 
 ## Team sync (Pears)
 
