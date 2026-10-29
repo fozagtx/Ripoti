@@ -27,6 +27,27 @@ Optional environment overrides:
 | `RIPOTI_WARM` | `0` to load models on first use instead of at start | `1` |
 | `PORT` | HTTP port | `4747` |
 
+## Run it offline (judges)
+
+1. Install Node 22.18 or newer and `ffmpeg`.
+2. Install, build and start:
+   ```bash
+   git clone https://github.com/fozagtx/Ripoti && cd Ripoti
+   npm install
+   npm run build
+   npm start
+   ```
+3. Open http://localhost:4747. While still online, do one practice visit (steps 5 to 7 below, including **Play read-back**). This downloads every model into the local cache (about 8 GB, one time only).
+4. Turn off Wi-Fi or unplug the network.
+5. Go to **New visit**, choose **Kiswahili** and tap the microphone. Speak a visit, for example: "Kaya namba sifuri moja nne mbili. Mtoto wa miezi sita hawezi kunyonya tangu jana." The text appears on screen each time you pause.
+6. Tap stop. Ripoti transcribes the full recording again, fills in the form and flags the danger sign "can't breastfeed" with the words quoted from your note. The household is marked for same-day referral.
+7. Review the form and tap **Save**. Tap **Play read-back** to hear the summary in Kiswahili (slow on a CPU, about a minute per sentence).
+8. Optional, team sync: put two laptops on the same hotspot. On one, open **Team sync**, choose *Supervisor*, enter a team code and tap **Start sync**. On the other, choose *Promoter*, enter the same code and the supervisor's address, and tap **Start sync**. The saved visit appears on the supervisor's laptop.
+
+No recording handy? Use **Upload audio** on the New visit page with any Kiswahili or English WAV/MP3/M4A file.
+
+Demo video: [`docs/demo.mp4`](docs/demo.mp4)
+
 ## Team sync (Pears)
 
 1. Supervisor laptop and promoter phones join the same hotspot or Wi-Fi.
