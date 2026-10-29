@@ -132,7 +132,7 @@ How each call is used:
 
 ## Built during the hackathon vs reused
 
-Everything in this repo was written during the event. Reused: `@qvac/sdk` and its models, Pears modules (`corestore`, `hyperbee`, `hyperswarm`, `hyperdht`, `protomux`), Hono, React, Vite, Lucide icons, the Inter font, ffmpeg, and Google FLEURS (CC BY 4.0) for the speech benchmark.
+Everything in this repo was written during the event. Reused: `@qvac/sdk` and its models, Pears modules (`corestore`, `hyperbee`, `hyperswarm`, `hyperdht`, `protomux`), Hono, React, Vite, Lucide icons, the Newsreader and Hanken Grotesk fonts (Fontsource), ffmpeg, and Google FLEURS (CC BY 4.0) for the speech benchmark.
 
 ## Licence
 
