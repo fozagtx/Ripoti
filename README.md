@@ -46,8 +46,6 @@ Optional environment overrides:
 
 No recording handy? Use **Upload audio** on the New visit page with any Kiswahili or English WAV/MP3/M4A file.
 
-Demo video: [`docs/demo.mp4`](docs/demo.mp4)
-
 ## Team sync (Pears)
 
 1. Supervisor laptop and promoter phones join the same hotspot or Wi-Fi.
